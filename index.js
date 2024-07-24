@@ -2,6 +2,18 @@ var devToolsEnabled = false;
 var strapColor = {color: 0xb80000, alpha: 1};
 var strapColor = {color: 0x000000, alpha: 0.8}
 
+//In states:
+var lowerThirdIn = false;
+var flipperIn = false;
+var newsBarIn = false;
+var clockIn = false;
+var textBadgeIn = false;
+var tileIn = false;
+var oneLineIn = false;
+var twoLineIn = false;
+
+
+
 // Create a PixiJS application.
 const app = new PIXI.Application();
 globalThis.__PIXI_APP__ = app;
@@ -24,9 +36,11 @@ PIXI.Assets.addBundle('fonts', [
 await PIXI.Assets.loadBundle('fonts');
 
 
-const templateTexture = await PIXI.Assets.load('OneLine.png');
+
+
+const templateTexture = await PIXI.Assets.load('TextStrapBadge.png');
 const template = new PIXI.Sprite(templateTexture);
-template.alpha = 1;
+template.alpha = 0;
 app.stage.addChild(template);
 
 //     ===LOWER THIRD===
@@ -142,6 +156,37 @@ newsBarLogo.mask = newsBarMask;
 
 newsBar.ctr.addChild(newsBarLogo.ctr);
 
+var textBadge = {};
+textBadge.ctr = new PIXI.Container(); textBadge.ctr.label = "Text Badge";
+var textBadgeBacking = new PIXI.Graphics();
+textBadgeBacking.rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942+48, 1920, 48);
+textBadgeBacking.fill(0xffffff);
+textBadge.ctr.addChild(textBadgeBacking);
+
+var textBadgeText = new PIXI.Text({ text: 'COMING UP', style: {fill: "#3f3e42", fontFamily: 'BBC Reith Sans Medium', fontSize: 35} });
+textBadgeText.resolution = 2;
+textBadgeText.x = 275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 32;
+textBadgeText.y = 943+48;
+textBadge.ctr.addChild(textBadgeText);
+
+textBadgeBacking.clear();
+textBadgeBacking.rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942+48, textBadgeText.width + 24, 48);
+textBadgeBacking.fill(0xffffff);
+
+//mask
+var textBadgeMask = new PIXI.Graphics()
+// Add the rectangular area to show
+    .rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942, textBadgeText.width + 24, 48)
+    .fill(0xffffff);
+textBadge.ctr.mask = textBadgeMask;
+textBadge.ctr.addChild(textBadgeMask);
+
+
+
+
+newsBar.ctr.addChild(textBadge.ctr);
+
+
 
 
 var textLine1 = new PIXI.Text({ text: 'Russian debt payments', style: {fill: "#ffffff", fontFamily: 'BBC Reith Serif Medium', fontSize: 55 } }); textLine1.id = "Text Line 1";
@@ -162,7 +207,6 @@ singleText.x = 281.5;
 singleText.y = 1014;
 //target 858.5
 //hidden: 1014
-
 newsBar.ctr.addChild(singleText);
 
 
@@ -172,6 +216,26 @@ lowerThird.ctr.addChild(newsBar.ctr);
 
 
 app.stage.addChild(lowerThird.ctr);
+
+
+var tile = new PIXI.Sprite(await PIXI.Assets.load('tiles/uk_reith.png')); tile.id = "Tile";
+tile.alpha = 0;
+app.stage.addChild(tile);
+
+var connectingIndicator = new PIXI.Graphics();
+connectingIndicator.rect(0, 0, 1920, 1080);
+connectingIndicator.fill(0x000000);
+connectingIndicator.alpha = 0.8;
+app.stage.addChild(connectingIndicator);
+
+var connectingText = new PIXI.Text({ text: 'No connection active', style: {fill: "#ffffff", fontFamily: 'Arial', fontSize: 50} });
+connectingText.resolution = 2;
+connectingText.x = 1920/2 - connectingText.width/2;
+connectingText.y = 1080/2 - connectingText.height/2;
+app.stage.addChild(connectingText);
+
+
+
 
 // gsap.to(template, {
 //     // this is the vars object
@@ -187,22 +251,89 @@ document.body.appendChild(app.canvas);
 //remove margins
 document.body.style.margin = 0;
 
-//on d key, run LowerThirdOut()
 document.addEventListener('keydown', (event) => {
-   
+   if (event.key === 'd') {
+       template.alpha = 1;
+   }
 });
-gsap.registerPlugin(GSDevTools) 
+
+//Try to connect to the server using normal websockets
+var ws = new WebSocket("ws://localhost:3010");
+
+ws.onopen = function() {
+    // Web Socket is connected, send data using send()
+    ws.send("Connection established");
+    connectingIndicator.alpha = 0;
+    connectingText.text = "Connected to server";
+    connectingText.x = 1920/2 - connectingText.width/2;
+    connectingText.y = 1080/2 - connectingText.height/2;
+};
+
+ws.onmessage = function (evt) {
+    var received_msg = evt.data;
+    console.log("Message is received...");
+    console.log(received_msg);
+};
+
+ws.onclose = function() {
+    // websocket is closed.
+
+    connectingIndicator.alpha = 0.8;
+    connectingText.text = "No connection active";
+    connectingText.x = 1920/2 - connectingText.width/2;
+    connectingText.y = 1080/2 - connectingText.height/2;
+};
+
+
+
 gsap.registerPlugin(CustomEase) 
-
-
-GSDevTools.create({id:"main"});
 
 let easeFunc = CustomEase.create("custom", "M0,0 C0.2,0 0.2,1 0.8,1 1,1 1,1 1,1");
 
-
-function ShowTwoLiner(line1, line2)
+async function TileIn()
 {
+
+    if(tileIn) return;
+
+    await LowerThirdOut();
+
+    let tl = newAnimWithDevTools("Tile In");
+
+    tileIn = true;
+
+    tl.to(tile, {
+        alpha: 1,
+        duration: 0.3,
+    });
+}
+
+async function TileOut()
+{
+    if(!tileIn) return;
+    tileIn = false;
+    return new Promise(resolve => { // Wrap the animation in a Promise
+
+        let tl = newAnimWithDevTools("Tile Out");
+
+        tl.to(tile, {
+            alpha: 0,
+            duration: 0.3,
+            onComplete: () => resolve(true)
+        });
+    });
+}
+
+async function ShowTwoLiner(line1, line2)
+{
+
+    await HideOneLiner();
+    await TileOut();
+    
     let tl = newAnimWithDevTools("Show Two Liner with Flipper")
+
+    if(twoLineIn)
+        return;
+    twoLineIn = true;
 
     let animDuration = 1;
 
@@ -241,6 +372,13 @@ function ShowTwoLiner(line1, line2)
         ease: easeFunc,
     }, "<");
 
+    
+    tl.to(textBadge.ctr, {
+        y: -125,
+        duration: animDuration,
+        ease: easeFunc,
+    }, "<");
+
     tl.to(textLine2, {
         y: 930,
         duration: animDuration,
@@ -249,47 +387,65 @@ function ShowTwoLiner(line1, line2)
 
 }
 
-function HideTwoLiner()
+async function HideTwoLiner()
 {
-    let tl = newAnimWithDevTools("Hide Two Liner with Flipper")
+    if(!twoLineIn)
+        return;
+    twoLineIn = false;
 
-    let animDuration = 0.8;
+    await TextBadgeOut();
 
-    let val = {y: 817, height: 173};
-    tl.to(val, {
-        y: 942,
-        height: 48,
-        duration: animDuration,
-        ease: easeFunc,
-        onUpdate: function()
-        {
-            newsBarMask.clear();
-            newsBarMask.rect(0, val.y, 1920, val.height);
-            newsBarMask.fill(0xffffff);
 
-            newsBarBacking.clear();
-            newsBarBacking.rect(0, val.y, 1920, val.height);
-            newsBarBacking.fill(strapColor);
-        }
+    return new Promise(resolve => { // Wrap the animation in a Promise
+
+
+        let tl = newAnimWithDevTools("Hide Two Liner with Flipper")
+
+        let animDuration = 0.8;
+
+        let val = {y: 817, height: 173};
+        tl.to(val, {
+            y: 942,
+            height: 48,
+            duration: animDuration,
+            ease: easeFunc,
+            onUpdate: function()
+            {
+                newsBarMask.clear();
+                newsBarMask.rect(0, val.y, 1920, val.height);
+                newsBarMask.fill(0xffffff);
+
+                newsBarBacking.clear();
+                newsBarBacking.rect(0, val.y, 1920, val.height);
+                newsBarBacking.fill(strapColor);
+            }
+        });
+
+        tl.to(newsBarLogo.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
+        tl.to(textLine1, {
+            y: 985,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
+        tl.to(textLine2, {
+            y: 1047,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
+        tl.to(textBadge.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+            onComplete: () => resolve(true)
+        }, "<");
     });
-
-    tl.to(newsBarLogo.ctr, {
-        y: 0,
-        duration: animDuration,
-        ease: easeFunc,
-    }, "<");
-
-    tl.to(textLine1, {
-        y: 985,
-        duration: animDuration,
-        ease: easeFunc,
-    }, "<");
-
-    tl.to(textLine2, {
-        y: 1047,
-        duration: animDuration,
-        ease: easeFunc,
-    }, "<");
 }
 
 //ShowTwoLiner("Russian debt payments", "US Treasury ends waiver allowing some payments");
@@ -319,6 +475,14 @@ async function fitTextToWidth(textObject, maxWidth, originalFontSize)
 
 async function ShowOneLiner(text)
 {
+
+    if(oneLineIn)
+        return;
+    oneLineIn = true;
+
+    await TileOut();
+    await HideTwoLiner();
+
     let tl = newAnimWithDevTools("Show One Liner with Flipper")
 
     let animDuration = 1;
@@ -355,8 +519,11 @@ async function ShowOneLiner(text)
     await fitTextToWidth(singleText, 1363, 92);
 
 
-
-
+    tl.to(textBadge.ctr, {
+        y: -125,
+        duration: animDuration,
+        ease: easeFunc,
+    }, "<");
 
 
     tl.to(singleText, {
@@ -367,90 +534,134 @@ async function ShowOneLiner(text)
 
 }
 
-function HideOneLiner()
+async function HideOneLiner()
 {
+
+    if(!oneLineIn)
+        return;
+    oneLineIn = false;
+
     let tl = newAnimWithDevTools("Hide One Liner with Flipper")
 
-    let animDuration = 0.8;
+    await TextBadgeOut();
 
-    let val = {y: 817, height: 173};
-    tl.to(val, {
-        y: 942,
-        height: 48,
-        duration: animDuration,
-        ease: easeFunc,
+    return new Promise(resolve => { // Wrap the animation in a Promise
 
-        onUpdate: function()
-        {
-            newsBarMask.clear();
-            newsBarMask.rect(0, val.y, 1920, val.height);
-            newsBarMask.fill(0xffffff);
 
-            newsBarBacking.clear();
-            newsBarBacking.rect(0, val.y, 1920, val.height);
-            newsBarBacking.fill(strapColor);
-        }
+        let animDuration = 0.8;
 
+        let val = {y: 817, height: 173};
+        tl.to(val, {
+            y: 942,
+            height: 48,
+            duration: animDuration,
+            ease: easeFunc,
+
+            onUpdate: function()
+            {
+                newsBarMask.clear();
+                newsBarMask.rect(0, val.y, 1920, val.height);
+                newsBarMask.fill(0xffffff);
+
+                newsBarBacking.clear();
+                newsBarBacking.rect(0, val.y, 1920, val.height);
+                newsBarBacking.fill(strapColor);
+            }
+
+        });
+
+        tl.to(newsBarLogo.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
+        tl.to(singleText, {
+
+            y: 1014 + singleLineYoffset,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
+        tl.to(textBadge.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+            onComplete: () => resolve(true)
+        }, "<");
     });
 
-    tl.to(newsBarLogo.ctr, {
-        y: 0,
-        duration: animDuration,
-        ease: easeFunc,
-    }, "<");
 
-    tl.to(singleText, {
 
-        y: 1014 + singleLineYoffset,
-        duration: animDuration,
-        ease: easeFunc,
-    }, "<");
+
 
 }
 
 
 
-function LowerThirdOut()
+async function LowerThirdOut()
 {
 
-    
+    if(!lowerThirdIn)
+        return;
+    lowerThirdIn = false;
+    flipperIn = false;
 
     let tl = newAnimWithDevTools("Lower Third Out");    
-    //NEW STYLE LOWERTHIRDS USE: tl.timeScale(1.5);
-    if(gsap.getById("Ticker Sequence") != undefined)
-    {
-        gsap.getById("Ticker Sequence").kill();
-    }
 
     tl.to(flipperContent.ctr, {
         alpha: 0,
         duration: 0.4,
     });
 
-
-    tl.to(lowerThird.ctr, {
-        y: 90,
-        duration: 1,
-        ease: easeFunc,
-    }, ">");
-
-    tl.to(newsBar.ctr, {
-        y: 48,
-        duration: 1,
-        ease: easeFunc,
-    } , "<");
-
-    tl.to(newsBarLogo.ctr, {
-        y: 48,
-        duration: 2,
-        ease: easeFunc,
-    }, "<");
-
     ClockOut();
+
+
+
+    await HideOneLiner();
+    await HideTwoLiner();
+
+
+    
+    return new Promise(resolve => { // Wrap the animation in a Promise
+
+        
+        //NEW STYLE LOWERTHIRDS USE: tl.timeScale(1.5);
+        if(gsap.getById("Ticker Sequence") != undefined)
+        {
+            gsap.getById("Ticker Sequence").kill();
+        }
+
+        gsap.delayedCall(0.5, () => {
+            resolve(true)
+        });
+
+
+
+        tl.to(lowerThird.ctr, {
+            y: 90,
+            duration: 1,
+            ease: easeFunc,
+        }, "<0.4");
+
+        tl.to(newsBar.ctr, {
+            y: 48,
+            duration: 1,
+            ease: easeFunc,
+        } , "<");
+
+        tl.to(newsBarLogo.ctr, {
+            y: 48,
+            duration: 2,
+            ease: easeFunc,
+        }, "<");
+    });
 }
 
 function LowerThirdOutInstant()
 {
+
+
     let tl = newAnimWithDevTools("Lower Third Out Instant");    
     if(gsap.getById("Ticker Sequence") != undefined)
     {
@@ -466,24 +677,32 @@ function LowerThirdOutInstant()
 
 }
 
-function ClockOut()
+async function ClockOut()
 {
+    if(!clockIn) return;
+    clockIn = false;
 
-    clock.ctr.y = 0;
+    return new Promise(resolve => {
 
-    let tl = newAnimWithDevTools("Clock Out");    
-    tl.to(clock.ctr, {
-        y: -90,
-        duration: 1,
-        ease: easeFunc,
-    }, "<");
+        clock.ctr.y = 0;
 
-
-
+        let tl = newAnimWithDevTools("Clock Out");    
+        tl.to(clock.ctr, {
+            y: -90,
+            duration: 1,
+            ease: easeFunc,
+            onComplete: () => resolve(true)
+        }, "<");
+    });
 }
 
 function ClockIn()
 {
+
+    if(clockIn) return;
+    clockIn = true;
+        
+
     clock.ctr.y = 90;
 
     let tl = newAnimWithDevTools("Clock In");
@@ -494,11 +713,249 @@ function ClockIn()
     }, "<");
 }
 
+LowerThirdOutInstant();
 
-//LowerThirdOutInstant();
-
-function LowerThirdIn()
+async function TextBadgeIn(text)
 {
+    if(textBadgeIn)
+    {
+        //update the text. Hide the badge and show it again
+        await TextBadgeOut();
+        TextBadgeIn(text);
+        return;
+    }
+        
+    textBadgeIn = true;
+
+    let tl = newAnimWithDevTools("Text Badge In");
+
+    textBadgeText.text = text;
+    var offset = {val: 48};
+
+    tl.to(offset, {
+        val: 0,
+        duration: 0.7,
+        ease: easeFunc,
+        onUpdate: function()
+        {
+            textBadgeBacking.clear();
+            textBadgeBacking.rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942+offset.val, 1920, 48);
+            textBadgeBacking.fill(0xffffff);
+
+            
+            textBadgeText.y = 943+offset.val;
+
+        }
+    });
+}
+
+async function TextBadgeOut()
+{
+    if(!textBadgeIn) return false;
+    textBadgeIn = false;
+    return new Promise(resolve => { // Wrap the animation in a Promise
+        let tl = newAnimWithDevTools("Text Badge Out");
+
+        var offset = { val: 0 };
+
+        tl.to(offset, {
+            val: 48,
+            duration: 0.7,
+            ease: easeFunc,
+            onUpdate: function() {
+                textBadgeBacking.clear();
+                textBadgeBacking.rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942 - offset.val, 1920, 48);
+                textBadgeBacking.fill(0xffffff);
+
+                textBadgeText.y = 943 - offset.val;
+            },
+            onComplete: () => resolve(true) // Resolve the Promise with true when the animation completes
+        });
+    });
+}
+
+
+function FlipperIn()
+{
+
+    if(flipperIn)
+        return;
+    flipperIn = true;
+
+    //Only put up the flipper
+    let tl = newAnimWithDevTools("Flipper In");
+
+    newsBarLogo.ctr.y = 0;
+
+    gsap.delayedCall(0.2, ClockIn); 
+        
+
+
+    tl.to(lowerThird.ctr, {
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+    }, "<");
+
+    flipperContent.ctr.y = 30;
+    flipperContent.ctr.alpha = 0;
+    flipperContent.ctr.mask = null;
+
+    tl.to(flipperContent.ctr, {
+        alpha: 1,
+        duration: 0.8,
+    
+    }, "<0.5");
+
+    tl.to(flipperContent.ctr, {
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        onComplete: function()
+        {
+            flipperContent.ctr.mask = flipperContentMask;
+        }
+    }, "<");
+
+    
+    flipperText.destroy();
+    flipperText = new PIXI.Text({ text: 'bbc.co.uk/news', style: {fill: "#3d3d3d", fontFamily: 'BBC Reith Sans Medium', fontSize: 34} });
+    flipperText.resolution = 2;
+    flipperText.x = 311
+    flipperText.y = 992;
+    flipperContent.ctr.addChild(flipperText);
+
+}
+
+function FlipperAndLowerThirdIn()
+{
+
+    if(flipperIn)
+        return;
+    flipperIn = true;
+    lowerThirdIn = true;
+
+    let tl = newAnimWithDevTools("Flipper and Lowerthird In");
+
+    let flipperTl = newAnimWithDevTools("Flipper In");
+
+
+    gsap.delayedCall(0.2, ClockIn); 
+        
+    flipperTl.to(lowerThird.ctr, {
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+    }, "<");
+
+    
+    flipperDot.y = 70;
+    flipperDot.alpha = 0;
+
+    flipperContent.ctr.y = 0;
+    flipperContent.ctr.alpha = 0;
+    flipperContent.ctr.mask = null;
+
+    flipperTl.to(flipperContent.ctr, {
+        alpha: 1,
+        duration: 0.8,
+    
+    }, "<0.5");
+
+    flipperTl.to(flipperDot, {
+        alpha: 1,
+        duration: 0.8,
+    }, "<");
+
+    flipperTl.to(flipperDot, {
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+    }, "<");
+
+    flipperTl.to(flipperContent.ctr, {
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        onComplete: function()
+        {
+            flipperContent.ctr.mask = flipperContentMask;
+        }
+    }, "<");
+
+
+    flipperText.destroy();
+    flipperText = new PIXI.Text({ text: 'HEADLINES', style: {fill: "#3d3d3d", fontFamily: 'BBC Reith Sans', fontWeight: "bold", fontSize: 34} });
+    flipperText.resolution = 2;
+    flipperText.x = 311
+    flipperText.y = 992;
+
+    flipperContent.ctr.addChild(flipperText);
+    ///////
+
+    newsBarLogo.ctr.y = 90;
+
+    gsap.delayedCall(0.9, ClockIn);
+
+    tl.to(newsBar.ctr, {
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+    }, "<0.8");
+
+    tl.to(newsBarLogo.ctr, {
+
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+    }, "<");
+
+    tl.to(lowerThird.ctr, {
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+    }, "<");
+
+
+}
+
+
+function FlipperOut()
+{
+
+    if(!flipperIn)
+        return;
+    flipperIn = false;
+
+    let tl = newAnimWithDevTools("Flipper Out");
+
+    tl.to(flipperContent.ctr, {
+        alpha: 0,
+        duration: 0.4,
+    });
+
+    tl.to(lowerThird.ctr, {
+        y: 90,
+        duration: 1,
+        ease: easeFunc,
+    }, ">");
+
+
+
+    ClockOut();
+}
+
+
+async function LowerThirdIn()
+{
+
+    if(lowerThirdIn)
+        return;
+    lowerThirdIn = true;
+    flipperIn = true;
+
+    await TileOut();
+
     let tl = newAnimWithDevTools("Lower Third In");
 
     if(gsap.getById("Lower Third Out") != undefined)
@@ -750,6 +1207,20 @@ new WinBox("Controls", {
     <button onclick="ClockOut()">Clock Out</button>
     <button onclick="ClockIn()">Clock In</button>
 
+    </br></br>
+    <button onclick="FlipperIn()">Flipper In</button>
+    <button onclick="FlipperOut()">Flipper Out</button>
+    <button onclick="FlipperAndLowerThirdIn()">Flipper in and Lowerthird In</button>
+
+    </br></br>
+    <button onclick="TileIn()">Tile In</button>
+    <button onclick="TileOut()">Tile Out</button>
+
+    </br></br>
+    <button onclick="TextBadgeIn('COMING UP')">Text Badge In</button>
+    <button onclick="TextBadgeOut()">Text Badge Out</button>
+
+
 
 
     `,
@@ -774,6 +1245,16 @@ window.ShowOneLiner = ShowOneLiner;
 window.HideOneLiner = HideOneLiner;
 window.ClockOut = ClockOut;
 window.ClockIn = ClockIn;
+
+window.TextBadgeIn = TextBadgeIn;
+window.TextBadgeOut = TextBadgeOut;
+
+window.FlipperIn = FlipperIn;
+window.FlipperOut = FlipperOut;
+window.FlipperAndLowerThirdIn = FlipperAndLowerThirdIn;
+
+window.TileIn = TileIn;
+window.TileOut = TileOut;
 
 
 
