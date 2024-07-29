@@ -1,6 +1,6 @@
 var devToolsEnabled = false;
 var strapColor = {color: 0xb80000, alpha: 1};
-var strapColor = {color: 0x000000, alpha: 0.8}
+//var strapColor = {color: 0x000000, alpha: 0.8}
 
 //In states:
 var lowerThirdIn = false;
@@ -11,6 +11,11 @@ var textBadgeIn = false;
 var tileIn = false;
 var oneLineIn = false;
 var twoLineIn = false;
+var nameTwoLineIn = false;
+var nameOneLineIn = false;
+
+var headlineOneLineIn = false;
+var headlineTwoLineIn = false;
 
 
 
@@ -20,28 +25,293 @@ globalThis.__PIXI_APP__ = app;
 //window.__PIXI_DEVTOOLS__ = {app: app};
 
 // Intialize the application.
-//await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
-await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
+await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
+//await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
 
 
 PIXI.Assets.addBundle('fonts', [
     { alias: 'Reith Sans Bold', src: 'fonts/ReithSansBd.ttf' },
     { alias: 'Reith Sans Medium', src: 'fonts/ReithSansMd.ttf' },
     { alias: 'Reith Serif Medium', src: 'fonts/ReithSerifMd.ttf' },
-    
-
+    { alias : 'BBC Reith Serif', src: 'fonts/ReithSerifRg.ttf'}
 ]);
 
 
 await PIXI.Assets.loadBundle('fonts');
 
 
-
-
-const templateTexture = await PIXI.Assets.load('TextStrapBadge.png');
+const templateTexture = await PIXI.Assets.load('Template2.png');
 const template = new PIXI.Sprite(templateTexture);
 template.alpha = 0;
 app.stage.addChild(template);
+
+
+//     ===HEADLINE===
+var headline = {};
+headline.ctr = new PIXI.Container(); headline.ctr.label = "Headline";
+
+var headlineFade = new PIXI.Sprite(await PIXI.Assets.load('images/HeadlineFade.png')); headlineFade.id = "Headline Fade";
+headlineFade.alpha = 0;
+headlineFade.width = 1920;
+headlineFade.height = 1280;
+headline.ctr.addChild(headlineFade);
+
+var headlineTextLine1Offset = {y: 0};
+var headlineTextLine1 = new PIXI.Text({ text: 'Athletics transgender ruling', style: {fill: "#ffffff", fontFamily: 'BBC Reith Serif', fontSize: 55 } }); headlineTextLine1.id = "Headline Text Line 1";
+headlineTextLine1.resolution = 2;
+headlineTextLine1.style.padding = 20;
+headlineTextLine1.x = 280;
+headlineTextLine1.y = 856;
+headline.ctr.addChild(headlineTextLine1);
+
+//Create a mask for the headline
+var headlineMask = new PIXI.Graphics()
+// Add the rectangular area to show
+    .rect(280, 856, 1363, 128)
+    .fill(0xffffff);
+headlineTextLine1.mask = headlineMask;
+headline.ctr.addChild(headlineMask);
+
+
+
+var newsBarLogoHeadline = {};
+newsBarLogoHeadline.ctr = new PIXI.Container(); newsBarLogoHeadline.ctr.label = "News Bar Logo";
+
+var newsBarLogoBoxHeadline = new PIXI.Graphics();
+
+
+newsBarLogoHeadline.ctr.addChild(newsBarLogoBoxHeadline);
+
+newsBarLogoHeadline.bbcLogo = new PIXI.Sprite(await PIXI.Assets.load('images/bbc.png'));
+newsBarLogoHeadline.bbcLogo.width = 560*0.21;
+newsBarLogoHeadline.bbcLogo.height = 160*0.21;
+newsBarLogoHeadline.bbcLogo.position.set(286,949);
+newsBarLogoHeadline.ctr.addChild(newsBarLogoHeadline.bbcLogo);
+
+var newsBarLogoTextHeadline = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans', fontSize: 35, fontWeight: 'bold' } });
+newsBarLogoTextHeadline.resolution = 2;
+newsBarLogoTextHeadline.x = 286 + newsBarLogoHeadline.bbcLogo.width + 11;
+newsBarLogoTextHeadline.y = 943;
+newsBarLogoHeadline.ctr.addChild(newsBarLogoTextHeadline);
+
+newsBarLogoBoxHeadline.rect(275, 942, newsBarLogoTextHeadline.width + 10 + newsBarLogoHeadline.bbcLogo.width + 20, 48);
+newsBarLogoBoxHeadline.fill(0xb80000);
+
+//mask
+var newsBarLogoMaskHeadline = new PIXI.Graphics()
+// Add the rectangular area to show
+    .rect(275, 942, newsBarLogoTextHeadline.width + 10 + newsBarLogoHeadline.bbcLogo.width + 20, 48)
+    .fill(0xffffff);
+newsBarLogoHeadline.ctr.mask = newsBarLogoMaskHeadline;
+
+headline.ctr.addChild(newsBarLogoHeadline.ctr);
+
+
+var headlineLeftBar = {}; 
+headlineLeftBar.ctr = new PIXI.Container(); headlineLeftBar.ctr.label = "Headline Left Bar";
+var headlineLeftBarBackingRed = new PIXI.Graphics();
+var headlineLeftBarBackingWhite = new PIXI.Graphics();
+
+headlineLeftBarBackingRed.rect(245, 900, 5, 50);
+headlineLeftBarBackingRed.fill(0xb80000);
+
+headlineLeftBarBackingWhite.rect(250, 900, 5, 50);
+headlineLeftBarBackingWhite.fill(0xffffff);
+
+headlineLeftBar.ctr.addChild(headlineLeftBarBackingWhite);
+headlineLeftBar.ctr.addChild(headlineLeftBarBackingRed);
+
+//Masks for the left bar
+var headlineLeftBarMask = new PIXI.Graphics()
+// Add the rectangular area to show
+    .rect(245, 900, 5, 50)
+    .fill(0xffffff);
+headlineLeftBar.ctr.mask = headlineLeftBarMask;
+
+
+headline.ctr.addChild(headlineLeftBar.ctr);
+
+
+
+//This would be run when text is updated, but for now we will just run it every 10ms
+setInterval(async () => {
+    HeadlineAdjustOneLine()
+}, 10);
+
+
+
+
+
+app.stage.addChild(headline.ctr);
+
+async function HeadlineInOneLine(text)
+{
+    if(headlineOneLineIn)
+    {
+        await HeadlineOutOneLine();
+        HeadlineInOneLine(text);
+        return;
+    }
+
+    await LowerThirdOut();
+    await TileOut();
+
+    headlineTextLine1.text = text;
+
+
+    HeadlineAdjustOneLine()
+
+    HeadlineAdjustOneLine()
+
+    HeadlineAdjustOneLine()
+
+
+
+
+    headlineOneLineIn = true;
+
+    let tl = newAnimWithDevTools("Headline In One Line");
+
+
+    headlineTextLine1Offset.y=headlineTextLine1.height+20;
+     
+    newsBarLogoHeadline.ctr.y=48;
+
+    headlineLeftBarBackingRed.y = -headlineTextLine1.height - 50
+    headlineLeftBarBackingWhite.y = -headlineTextLine1.height - 50
+
+    tl.to(headlineTextLine1Offset, {
+        y: 0,
+        duration: 1.3,
+        ease: "power4.out",
+    });
+
+    tl.to(newsBarLogoHeadline.ctr, {
+        y: 0,
+        duration: 0.8,
+        ease: easeFunc,
+    }, "<");
+
+
+
+    tl.to(headlineLeftBarBackingWhite, {
+        y: 0,
+        duration: 1,
+        ease: "power1.out",
+    }, "<");
+
+    tl.to(headlineFade, {
+        alpha: 1,
+        duration: 1,
+    }, "<");
+
+    tl.to(headlineLeftBarBackingRed, {
+        y: 0,
+        duration: 1,
+        ease: easeFunc,
+    }, "<0.3");
+
+}
+
+async function HeadlineOutOneLine()
+{
+    if(!headlineOneLineIn)
+    {
+        return;
+    }
+
+    headlineOneLineIn = false;
+
+    let tl = newAnimWithDevTools("Headline Out One Line");
+
+    return new Promise(resolve => {
+
+        tl.to(newsBarLogoHeadline.ctr, {
+            y: -48,
+            duration: 1,
+            ease: "power4.out",
+        });
+
+        tl.to(headlineLeftBarBackingWhite, {
+            y: headlineTextLine1.height+50,
+            duration: 1,
+            ease: "power4.out",
+        }, "<");
+
+        tl.to(headlineLeftBarBackingRed, {
+            y: headlineTextLine1.height+50,
+            duration: 1,
+            ease: "power4.out",
+        }, "<");
+
+        tl.to(headlineFade, {
+            alpha: 0,
+            duration: 1,
+        }, "<");
+
+        tl.to(headlineTextLine1Offset, {
+            y: -headlineTextLine1.height-20,
+            duration: 1,
+            ease: "power4.out",
+            onComplete: () => resolve(true)
+        }, "<0.1");
+    });
+}
+
+function HeadlineOutOneLineInstant()
+{
+
+    headlineOneLineIn = false;
+    headlineTextLine1.text = "";
+    HeadlineAdjustOneLine();
+    HeadlineAdjustOneLine();
+    newsBarLogoHeadline.ctr.y = -48;
+    headlineLeftBarBackingWhite.y = headlineTextLine1.height+50;
+    headlineLeftBarBackingRed.y = headlineTextLine1.height+50;
+    headlineFade.alpha = 0;
+    headlineTextLine1Offset.y = -headlineTextLine1.height-20;
+}
+
+HeadlineOutOneLineInstant();
+
+async function HeadlineAdjustOneLine()
+{
+
+    //promise
+    headlineTextLine1.y = 1080-100 - headlineTextLine1.height + headlineTextLine1Offset.y;
+    await fitTextToWidthHeadline(headlineTextLine1, 1363, 128);
+    //adjust the mask
+    headlineMask.clear();
+    headlineMask.rect(280, (headlineTextLine1.y- headlineTextLine1Offset.y), headlineTextLine1.width, headlineTextLine1.height+20);
+    
+    headlineMask.fill(0xffffff);
+    
+    
+    newsBarLogoTextHeadline.y = (headlineTextLine1.y- headlineTextLine1Offset.y) - 48;
+    newsBarLogoHeadline.bbcLogo.y = (headlineTextLine1.y- headlineTextLine1Offset.y) - 48 + 6;
+    newsBarLogoBoxHeadline.clear();
+    newsBarLogoBoxHeadline.rect(275, (headlineTextLine1.y- headlineTextLine1Offset.y) - 48, newsBarLogoTextHeadline.width + 10 + newsBarLogoHeadline.bbcLogo.width + 20, 48);
+    newsBarLogoBoxHeadline.fill(0xb80000);
+
+    newsBarLogoMaskHeadline.clear();
+    newsBarLogoMaskHeadline.rect(275, (headlineTextLine1.y- headlineTextLine1Offset.y) - 48, newsBarLogoTextHeadline.width + 10 + newsBarLogoHeadline.bbcLogo.width + 20, 48);
+    newsBarLogoMaskHeadline.fill(0xffffff);
+
+    //redraw the left bar
+    headlineLeftBarBackingRed.clear();
+    headlineLeftBarBackingRed.rect(245, (headlineTextLine1.y- headlineTextLine1Offset.y) - 50, 5, headlineTextLine1.height + 50);
+    headlineLeftBarBackingRed.fill(0xb80000);
+
+    headlineLeftBarBackingWhite.clear();
+    headlineLeftBarBackingWhite.rect(245, (headlineTextLine1.y- headlineTextLine1Offset.y) - 50, 5, headlineTextLine1.height + 50);
+    headlineLeftBarBackingWhite.fill(0xffffff);
+
+    headlineLeftBarMask.clear();
+    headlineLeftBarMask.rect(245, (headlineTextLine1.y- headlineTextLine1Offset.y) - 50, 5, headlineTextLine1.height + 50);
+    headlineLeftBarMask.fill(0xffffff);
+
+}
+
 
 //     ===LOWER THIRD===
 var lowerThird = {};
@@ -120,6 +390,8 @@ newsBarBacking.rect(0, 942, 1920, 48);
 newsBarBacking.fill(strapColor);
 newsBar.ctr.addChild(newsBarBacking);
 
+
+
 // Create a graphics object to define our mask
 var newsBarMask = new PIXI.Graphics()
 // Add the rectangular area to show
@@ -129,6 +401,38 @@ var newsBarMask = new PIXI.Graphics()
 
 flipper.ctr.addChild(newsBarMask);
 newsBar.ctr.mask = newsBarMask;
+
+
+
+var textLine1 = new PIXI.Text({ text: 'Russian debt payments', style: {fill: "#ffffff", fontFamily: 'BBC Reith Serif Medium', fontSize: 55 } }); textLine1.id = "Text Line 1";
+textLine1.resolution = 2;
+textLine1.x = 286;
+textLine1.y = 985;
+newsBar.ctr.addChild(textLine1);
+
+var textLine2 = new PIXI.Text({ text: 'US Treasury ends waiver allowing some payments', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 40.5 } }); textLine2.id = "Text Line 2";
+textLine2.resolution = 2;
+textLine2.x = 286;
+textLine2.y = 1047;
+newsBar.ctr.addChild(textLine2);
+
+//create a mask that will show the contents of the bar minus the logo strip bit
+var nameStrapMask = new PIXI.Graphics()
+// Add the rectangular area to show
+    .rect(0, 942-125, 1920, 125)
+    .fill(0xffffff);
+
+textLine1.mask = nameStrapMask;
+textLine2.mask = nameStrapMask;
+
+var singleText = new PIXI.Text({ text: 'UK Deputy PM Raab resigns', style: {fill: "#ffffff", fontFamily: 'BBC Reith Serif Medium', fontSize: 92 } }); singleText.id = "Single Text";
+singleText.resolution = 2;
+singleText.x = 281.5;
+singleText.y = 1014;
+//target 858.5
+//hidden: 1014
+newsBar.ctr.addChild(singleText);
+
 
 var newsBarLogo = {};
 newsBarLogo.ctr = new PIXI.Container(); newsBarLogo.ctr.label = "News Bar Logo";
@@ -189,27 +493,6 @@ newsBar.ctr.addChild(textBadge.ctr);
 
 
 
-var textLine1 = new PIXI.Text({ text: 'Russian debt payments', style: {fill: "#ffffff", fontFamily: 'BBC Reith Serif Medium', fontSize: 55 } }); textLine1.id = "Text Line 1";
-textLine1.resolution = 2;
-textLine1.x = 286;
-textLine1.y = 985;
-newsBar.ctr.addChild(textLine1);
-
-var textLine2 = new PIXI.Text({ text: 'US Treasury ends waiver allowing some payments', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 40.5 } }); textLine2.id = "Text Line 2";
-textLine2.resolution = 2;
-textLine2.x = 286;
-textLine2.y = 1047;
-newsBar.ctr.addChild(textLine2);
-
-var singleText = new PIXI.Text({ text: 'UK Deputy PM Raab resigns', style: {fill: "#ffffff", fontFamily: 'BBC Reith Serif Medium', fontSize: 92 } }); singleText.id = "Single Text";
-singleText.resolution = 2;
-singleText.x = 281.5;
-singleText.y = 1014;
-//target 858.5
-//hidden: 1014
-newsBar.ctr.addChild(singleText);
-
-
 
 
 lowerThird.ctr.addChild(newsBar.ctr);
@@ -226,7 +509,7 @@ var connectingIndicator = new PIXI.Graphics();
 connectingIndicator.rect(0, 0, 1920, 1080);
 connectingIndicator.fill(0x000000);
 connectingIndicator.alpha = 0.8;
-app.stage.addChild(connectingIndicator);
+//app.stage.addChild(connectingIndicator);
 
 var connectingText = new PIXI.Text({ text: 'No connection active', style: {fill: "#ffffff", fontFamily: 'Arial', fontSize: 50} });
 connectingText.resolution = 2;
@@ -252,41 +535,138 @@ document.body.appendChild(app.canvas);
 document.body.style.margin = 0;
 
 document.addEventListener('keydown', (event) => {
-   if (event.key === 'd') {
-       template.alpha = 1;
-   }
+//    if (event.key === 'd') {
+//        template.alpha = 1;
+//    }
 });
 
 //Try to connect to the server using normal websockets
-var ws = new WebSocket("ws://localhost:3010");
+var ws;
+var connectInterval;
+var reconnectAttempts = 0;
 
-ws.onopen = function() {
-    // Web Socket is connected, send data using send()
-    ws.send("Connection established");
-    connectingIndicator.alpha = 0;
-    connectingText.text = "Connected to server";
-    connectingText.x = 1920/2 - connectingText.width/2;
-    connectingText.y = 1080/2 - connectingText.height/2;
-};
+function connectWebSocket() {
+    // Close previous WebSocket if open
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+    }
 
-ws.onmessage = function (evt) {
-    var received_msg = evt.data;
-    console.log("Message is received...");
-    console.log(received_msg);
-};
+    ws = new WebSocket("ws://localhost:3010");
 
-ws.onclose = function() {
-    // websocket is closed.
+    ws.onopen = function() {
+        console.log("Connection established");
+        clearInterval(connectInterval);
+        reconnectAttempts = 0; // Reset reconnect attempts on successful connection
 
+        // Update UI to show connection status
+        connectingIndicator.alpha = 0;
+        connectingText.text = "Connected to server";
+        connectingText.x = 1920 / 2 - connectingText.width / 2;
+        connectingText.y = 1080 / 2 - connectingText.height / 2;
+
+        setTimeout(() => {
+            connectingIndicator.alpha = 0;
+            connectingText.text = "";
+
+        }, 2000);
+    };
+
+    ws.onmessage = function(evt) {
+        var received_msg = evt.data;
+        console.log("Message is received...");
+        console.log(received_msg);
+
+        var message = JSON.parse(received_msg);
+        if(message.type == "take text")
+        {
+            if(message.line1text == "")
+            {
+                ShowOneLiner(message.top);
+            } else {
+                ShowTwoLiner(message.top, message.line1text);
+            }
+        }
+        else if(message.type == "take out text")
+        {
+            HideOneLiner();
+            HideTwoLiner();
+        } 
+        else if(message.type == "straps on")
+        {
+            LowerThirdIn();
+        }
+        else if(message.type == "straps off")
+        {
+            LowerThirdOut();
+        } 
+        else if(message.type == ".5")
+        {
+            TileIn();
+        }
+        else if(message.type == "[TILE OFF]")
+        {
+            TileOut();
+        }
+        else if(message.type == "[HEAD OFF]")
+        {
+            HeadlineOutOneLine();
+        }   
+        else if(message.type == "[TICKER ON]")
+        {
+            FlipperIn();
+        }
+        else if(message.type == "[LOGO ON]")
+        {
+            FlipperAndLowerThirdIn();
+        }
+        else if(message.type == "[LOGO OFF]")
+        {
+            LowerThirdOut();
+        }
+        else if(message.type == "[LOWERTHIRD ON]")
+        {
+            LowerThirdIn();
+        }
+        else if(message.type == "HEAD")
+        {
+            HeadlineInOneLine(message.data  );
+        }
+
+
+
+    };
+
+    ws.onclose = function() {
+        console.log("Connection is closed...");
+        scheduleReconnect();
+    };
+
+    ws.onerror = function(err) {
+        console.log("WebSocket error:", err);
+        ws.close(); // Ensure WebSocket is closed after an error
+    };
+}
+
+function scheduleReconnect() {
+    clearTimeout(connectInterval); // Clear previous reconnect interval if any
+    connectInterval = setTimeout(() => {
+        connectWebSocket(); // Attempt to reconnect
+    }, 3000); // Attempt to reconnect every 3 seconds
+
+    // Update UI to show no connection
     connectingIndicator.alpha = 0.8;
     connectingText.text = "No connection active";
-    connectingText.x = 1920/2 - connectingText.width/2;
-    connectingText.y = 1080/2 - connectingText.height/2;
-};
+    connectingText.x = 1920 / 2 - connectingText.width / 2;
+    connectingText.y = 1080 / 2 - connectingText.height / 2;
+}
 
+// Initial connection attempt
+connectWebSocket();
 
 
 gsap.registerPlugin(CustomEase) 
+
+//  GSDevTools.create({id: "main"});
 
 let easeFunc = CustomEase.create("custom", "M0,0 C0.2,0 0.2,1 0.8,1 1,1 1,1 1,1");
 
@@ -296,6 +676,7 @@ async function TileIn()
     if(tileIn) return;
 
     await LowerThirdOut();
+    await HeadlineOutOneLine();
 
     let tl = newAnimWithDevTools("Tile In");
 
@@ -303,7 +684,7 @@ async function TileIn()
 
     tl.to(tile, {
         alpha: 1,
-        duration: 0.3,
+        duration: 0.5,
     });
 }
 
@@ -317,7 +698,7 @@ async function TileOut()
 
         tl.to(tile, {
             alpha: 0,
-            duration: 0.3,
+            duration: 0.5,
             onComplete: () => resolve(true)
         });
     });
@@ -326,16 +707,23 @@ async function TileOut()
 async function ShowTwoLiner(line1, line2)
 {
 
-    await HideOneLiner();
-    await TileOut();
-    
+
     let tl = newAnimWithDevTools("Show Two Liner with Flipper")
 
     if(twoLineIn)
         return;
     twoLineIn = true;
 
+    await HideOneLiner();
+    await HideNameTwoLiner();
+    await HideNameOneLiner();
+    await TileOut();
+
     let animDuration = 1;
+
+    //turn off text masks
+    textLine1.mask = null;
+    textLine2.mask = null;
 
     let val = {y: 942, height: 48};
     tl.to(val, {
@@ -448,29 +836,298 @@ async function HideTwoLiner()
     });
 }
 
+async function ShowNameTwoLiner(line1, line2)
+{
+
+    await HideOneLiner();
+    await HideTwoLiner();
+    await HideNameOneLiner();
+    await TileOut();
+    
+    let tl = newAnimWithDevTools("Show Name Two Liner with Flipper")
+
+    if(nameTwoLineIn)
+        return;
+    nameTwoLineIn = true;
+
+    //turn on text masks
+    textLine1.mask = nameStrapMask;
+    textLine2.mask = nameStrapMask;
+
+    let animDuration = 1.1;
+
+    let val = {y: 942, height: 48};
+    tl.to(val, {
+        y: 817,
+        height: 173,
+        duration: animDuration,
+        ease: easeFunc,
+        onUpdate: function()
+        {
+            newsBarMask.clear();
+            newsBarMask.rect(0, val.y, 1920, val.height);
+            newsBarMask.fill(0xffffff);
+
+            newsBarBacking.clear();
+            newsBarBacking.rect(0, val.y, 1920, val.height);
+            newsBarBacking.fill(strapColor);
+        }
+    });
+
+    textLine1.y = 985+48;
+    textLine2.y = 1052+48;
+    textLine1.text = line1;
+    textLine2.text = line2;
+
+    tl.to(textLine1, {
+        y: 863-48,
+        duration: animDuration,
+        ease: easeFunc,
+    }, "<");
+
+    
+
+    tl.to(textLine2, {
+        y: 930-48,
+        duration: animDuration,
+        ease: easeFunc,
+    }, "<0.1");
+
+}
+
+async function HideNameTwoLiner()
+{
+    if(!nameTwoLineIn)
+        return;
+    nameTwoLineIn = false;
+
+    await TextBadgeOut();
+
+
+    return new Promise(resolve => { // Wrap the animation in a Promise
+
+
+        let tl = newAnimWithDevTools("Hide Name Two Liner with Flipper")
+
+        let animDuration = 0.8;
+
+        let val = {y: 817, height: 173};
+        tl.to(val, {
+            y: 942,
+            height: 48,
+            duration: animDuration,
+            ease: easeFunc,
+            onUpdate: function()
+            {
+                newsBarMask.clear();
+                newsBarMask.rect(0, val.y, 1920, val.height);
+                newsBarMask.fill(0xffffff);
+
+                newsBarBacking.clear();
+                newsBarBacking.rect(0, val.y, 1920, val.height);
+                newsBarBacking.fill(strapColor);
+            }
+        });
+
+        tl.to(newsBarLogo.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
+        tl.to(textLine1, {
+            y: 985-48,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
+        tl.to(textLine2, {
+            y: 1047-48,
+            duration: animDuration,
+            ease: easeFunc,
+            onComplete: function() {
+                    //turn off text masks
+                    textLine1.mask = null;
+                    textLine2.mask = null;
+
+                    //empty text
+                    textLine1.text = "";
+                    textLine2.text = "";
+            }
+        }, "<");
+
+        tl.to(textBadge.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+            onComplete: () => resolve(true)
+        }, "<");
+    });
+}
+
+async function ShowNameOneLiner(line1)
+{
+
+    await HideOneLiner();
+    await HideTwoLiner();
+    await HideNameTwoLiner();
+    await TileOut();
+    
+    let tl = newAnimWithDevTools("Show Name One Liner with Flipper")
+
+    if(nameOneLineIn)
+        return;
+    nameOneLineIn = true;
+
+    //turn on text masks
+    textLine1.mask = nameStrapMask;
+
+    let animDuration = 1;
+
+    let val = {y: 942, height: 48};
+    tl.to(val, {
+        y: 817+48,
+        height: 173-48,
+        duration: animDuration,
+        ease: easeFunc,
+        onUpdate: function()
+        {
+            newsBarMask.clear();
+            newsBarMask.rect(0, val.y, 1920, val.height);
+            newsBarMask.fill(0xffffff);
+
+            newsBarBacking.clear();
+            newsBarBacking.rect(0, val.y, 1920, val.height);
+            newsBarBacking.fill(strapColor);
+        }
+    });
+
+    textLine1.y = 985+20;
+    textLine1.text = line1;
+
+    tl.to(textLine1, {
+        y: 863,
+        duration: animDuration,
+        ease: easeFunc,
+    }, "<");
+
+    
+
+}
+
+async function HideNameOneLiner()
+{
+    if(!nameOneLineIn)
+        return;
+    nameOneLineIn = false;
+
+    await TextBadgeOut();
+
+
+    return new Promise(resolve => { // Wrap the animation in a Promise
+
+
+        let tl = newAnimWithDevTools("Hide Name One Liner with Flipper")
+
+        let animDuration = 0.8;
+
+        let val = {y: 817+48, height: 173-48};
+        tl.to(val, {
+            y: 942,
+            height: 48,
+            duration: animDuration,
+            ease: easeFunc,
+            onUpdate: function()
+            {
+                newsBarMask.clear();
+                newsBarMask.rect(0, val.y, 1920, val.height);
+                newsBarMask.fill(0xffffff);
+
+                newsBarBacking.clear();
+                newsBarBacking.rect(0, val.y, 1920, val.height);
+                newsBarBacking.fill(strapColor);
+            }
+        });
+
+        tl.to(newsBarLogo.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
+        tl.to(textLine1, {
+            y: 985-48,
+            duration: animDuration,
+            ease: easeFunc,
+            onComplete: function() {
+                //turn off text masks
+                textLine1.mask = null;  
+                //empty text
+                textLine1.text = "";  
+            }
+        }, "<");
+
+
+        tl.to(textBadge.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+            onComplete: () => resolve(true)
+        }, "<");
+    });
+}
+
 //ShowTwoLiner("Russian debt payments", "US Treasury ends waiver allowing some payments");
 
 var singleLineYoffset = 0;
-
 async function fitTextToWidth(textObject, maxWidth, originalFontSize) 
 {
 
-    singleLineYoffset = 0;
+    //promise
+    return new Promise(resolve => { 
 
-    // Reset the font size to the original size
-    textObject.style.fontSize = originalFontSize;
-    
-    // Reduce font size until the text fits within the maxWidth
-    while (textObject.width > maxWidth && textObject.style.fontSize > 1) {
-        textObject.style.fontSize--;
-    }
+        singleLineYoffset = 0;
 
-    //the text object is now the correct size, but we need to adjust the y position to center it
-    singleLineYoffset = (130 - textObject.height) / 2;
+        // Reset the font size to the original size
+        textObject.style.fontSize = originalFontSize;
+        
+        // Reduce font size until the text fits within the maxWidth
+        while (textObject.width > maxWidth && textObject.style.fontSize > 1) {
+            textObject.style.fontSize--;
+        }
+
+        //the text object is now the correct size, but we need to adjust the y position to center it
+        singleLineYoffset = (130 - textObject.height) / 2;
 
 
-    //return the y offset
-    return singleLineYoffset;
+        //return the y offset
+        resolve(true);
+    });
+}
+
+var previousFitText = "";
+async function fitTextToWidthHeadline(textObject, maxWidth, originalFontSize) 
+{
+    //promise
+    return new Promise(resolve => { 
+
+        if(previousFitText == textObject.text)
+        {
+            resolve(true);
+            return;
+        }
+        previousFitText = textObject.text;
+
+        // Reset the font size to the original size
+        textObject.style.fontSize = originalFontSize;
+        
+        // Reduce font size until the text fits within the maxWidth
+        while (textObject.width > maxWidth && textObject.style.fontSize > 1) {
+            textObject.style.fontSize--;
+        }
+        resolve(true);
+    });
+
 }
 
 async function ShowOneLiner(text)
@@ -482,6 +1139,8 @@ async function ShowOneLiner(text)
 
     await TileOut();
     await HideTwoLiner();
+    await HideNameTwoLiner();   
+    await HideNameOneLiner();
 
     let tl = newAnimWithDevTools("Show One Liner with Flipper")
 
@@ -614,12 +1273,15 @@ async function LowerThirdOut()
         duration: 0.4,
     });
 
-    ClockOut();
-
 
 
     await HideOneLiner();
     await HideTwoLiner();
+    await HideNameTwoLiner();
+    await HideNameOneLiner();
+
+  
+
 
 
     
@@ -627,34 +1289,42 @@ async function LowerThirdOut()
 
         
         //NEW STYLE LOWERTHIRDS USE: tl.timeScale(1.5);
+        //tl.timeScale(1.5);
         if(gsap.getById("Ticker Sequence") != undefined)
         {
             gsap.getById("Ticker Sequence").kill();
         }
 
+        
+
+
         gsap.delayedCall(0.5, () => {
             resolve(true)
         });
 
+        ClockOut();
+        gsap.delayedCall(0.2, () => {
+            
+            tl.to(lowerThird.ctr, {
+                y: 90,
+                duration: 1,
+                ease: easeFunc,
+            }, "<0.4");
+    
+            tl.to(newsBar.ctr, {
+                y: 48,
+                duration: 1,
+                ease: easeFunc,
+            } , "<");
+    
+            tl.to(newsBarLogo.ctr, {
+                y: 48,
+                duration: 2,
+                ease: easeFunc,
+            }, "<");
+        });
 
-
-        tl.to(lowerThird.ctr, {
-            y: 90,
-            duration: 1,
-            ease: easeFunc,
-        }, "<0.4");
-
-        tl.to(newsBar.ctr, {
-            y: 48,
-            duration: 1,
-            ease: easeFunc,
-        } , "<");
-
-        tl.to(newsBarLogo.ctr, {
-            y: 48,
-            duration: 2,
-            ease: easeFunc,
-        }, "<");
+     
     });
 }
 
@@ -955,6 +1625,7 @@ async function LowerThirdIn()
     flipperIn = true;
 
     await TileOut();
+    await HeadlineOutOneLine();
 
     let tl = newAnimWithDevTools("Lower Third In");
 
@@ -1178,58 +1849,80 @@ function newAnimWithDevTools(id)
     return tl;
 }
 
-new WinBox("Controls", {
-    html:
-    `
+// new WinBox("Controls", {
+//     html:
+//     `
 
-    <button onclick="LowerThirdOut()">Lower Third Out</button>
-    <button onclick="LowerThirdIn()">Lower Third In</button>
-    </br>
-    <button onclick="BeginTickerSequence()">Begin Ticker Sequence</button>
-    </br>
-    <input type="text" id="newsBarText" placeholder="News Bar Text">
-    <button onclick="UpdateNewsBarText(document.getElementById('newsBarText').value)">Update News Bar Text</button>
+//     <button onclick="LowerThirdOut()">Lower Third Out</button>
+//     <button onclick="LowerThirdIn()">Lower Third In</button>
+//     </br>
+//     <button onclick="BeginTickerSequence()">Begin Ticker Sequence</button>
+//     </br>
+//     <input type="text" id="newsBarText" placeholder="News Bar Text">
+//     <button onclick="UpdateNewsBarText(document.getElementById('newsBarText').value)">Update News Bar Text</button>
 
-    </br></br>
-    <input type="text" id="twoLinerLine1" placeholder="Two Liner Line 1">
-    <input type="text" id="twoLinerLine2" placeholder="Two Liner Line 2">
-    </br>
-    <button onclick="ShowTwoLiner(document.getElementById('twoLinerLine1').value, document.getElementById('twoLinerLine2').value)">Show Two Liner</button>
-    <button onclick="HideTwoLiner()">Hide Two Liner</button>
+//     </br></br>
+//     <input type="text" id="twoLinerLine1" placeholder="Two Liner Line 1">
+//     <input type="text" id="twoLinerLine2" placeholder="Two Liner Line 2">
+//     </br>
+//     <button onclick="ShowTwoLiner(document.getElementById('twoLinerLine1').value, document.getElementById('twoLinerLine2').value)">Show Two Liner</button>
+//     <button onclick="HideTwoLiner()">Hide Two Liner</button>
 
-    </br></br>
-    <input type="text" id="oneLinerText" placeholder="One Liner Text">
-    </br>
-    <button onclick="ShowOneLiner(document.getElementById('oneLinerText').value)">Show One Liner</button>
-    <button onclick="HideOneLiner()">Hide One Liner</button>
+//     </br></br>
+//     <input type="text" id="oneLinerText" placeholder="One Liner Text">
+//     </br>
+//     <button onclick="ShowOneLiner(document.getElementById('oneLinerText').value)">Show One Liner</button>
+//     <button onclick="HideOneLiner()">Hide One Liner</button>
 
-    </br></br>
-    <button onclick="ClockOut()">Clock Out</button>
-    <button onclick="ClockIn()">Clock In</button>
+//     </br></br>
+//     <button onclick="ClockOut()">Clock Out</button>
+//     <button onclick="ClockIn()">Clock In</button>
 
-    </br></br>
-    <button onclick="FlipperIn()">Flipper In</button>
-    <button onclick="FlipperOut()">Flipper Out</button>
-    <button onclick="FlipperAndLowerThirdIn()">Flipper in and Lowerthird In</button>
+//     </br></br>
+//     <button onclick="FlipperIn()">Flipper In</button>
+//     <button onclick="FlipperOut()">Flipper Out</button>
+//     <button onclick="FlipperAndLowerThirdIn()">Flipper in and Lowerthird In</button>
 
-    </br></br>
-    <button onclick="TileIn()">Tile In</button>
-    <button onclick="TileOut()">Tile Out</button>
+//     </br></br>
+//     <button onclick="TileIn()">Tile In</button>
+//     <button onclick="TileOut()">Tile Out</button>
 
-    </br></br>
-    <button onclick="TextBadgeIn('COMING UP')">Text Badge In</button>
-    <button onclick="TextBadgeOut()">Text Badge Out</button>
+//     </br></br>
+//     <button onclick="TextBadgeIn('COMING UP')">Text Badge In</button>
+//     <button onclick="TextBadgeOut()">Text Badge Out</button>
+
+//     </br></br>
+//     <input type="text" id="nameTwoLinerLine1" placeholder="Name Two Liner Line 1">
+//     <input type="text" id="nameTwoLinerLine2" placeholder="Name Two Liner Line 2">
+//     </br>
+//     <button onclick="ShowNameTwoLiner(document.getElementById('nameTwoLinerLine1').value, document.getElementById('nameTwoLinerLine2').value)">Show Name Two Liner</button>
+//     <button onclick="HideNameTwoLiner()">Hide Name Two Liner</button>
+
+//     </br></br>
+//     <input type="text" id="nameOneLinerLine1" placeholder="Name One Liner Line 1">  
+//     </br>
+//     <button onclick="ShowNameOneLiner(document.getElementById('nameOneLinerLine1').value)">Show Name One Liner</button>
+//     <button onclick="HideNameOneLiner()">Hide Name One Liner</button>
+
+//     </br></br>
+//     <input type="text" id="headlineOneLine" placeholder="Headline One Line">
+//     </br>
+//     <button onclick="HeadlineInOneLine(document.getElementById('headlineOneLine').value)">Headline In One Line</button>
+//     <button onclick="HeadlineOutOneLine()">Headline Out One Line</button>
+    
 
 
 
 
-    `,
-    x: "center",
-    y: "center",
-    width: 800,
-    height: 600,
-    class: [ "no-min", "no-max", "no-full",  ]
-});
+
+
+//     `,
+//     x: "center",
+//     y: "center",
+//     width: 800,
+//     height: 600,
+//     class: [ "no-min", "no-max", "no-full",  ]
+// });
 
 window.UpdateNewsBarText = UpdateNewsBarText;
 
@@ -1243,8 +1936,14 @@ window.ShowTwoLiner = ShowTwoLiner;
 window.HideTwoLiner = HideTwoLiner;
 window.ShowOneLiner = ShowOneLiner;
 window.HideOneLiner = HideOneLiner;
+window.ShowNameTwoLiner = ShowNameTwoLiner;
+window.HideNameTwoLiner = HideNameTwoLiner;
+window.ShowNameOneLiner = ShowNameOneLiner;
+window.HideNameOneLiner = HideNameOneLiner;
 window.ClockOut = ClockOut;
 window.ClockIn = ClockIn;
+
+
 
 window.TextBadgeIn = TextBadgeIn;
 window.TextBadgeOut = TextBadgeOut;
@@ -1256,6 +1955,8 @@ window.FlipperAndLowerThirdIn = FlipperAndLowerThirdIn;
 window.TileIn = TileIn;
 window.TileOut = TileOut;
 
+window.HeadlineInOneLine = HeadlineInOneLine;
+window.HeadlineOutOneLine = HeadlineOutOneLine;
 
 
 
