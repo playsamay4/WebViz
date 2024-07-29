@@ -1849,80 +1849,83 @@ function newAnimWithDevTools(id)
     return tl;
 }
 
-// new WinBox("Controls", {
-//     html:
-//     `
-
-//     <button onclick="LowerThirdOut()">Lower Third Out</button>
-//     <button onclick="LowerThirdIn()">Lower Third In</button>
-//     </br>
-//     <button onclick="BeginTickerSequence()">Begin Ticker Sequence</button>
-//     </br>
-//     <input type="text" id="newsBarText" placeholder="News Bar Text">
-//     <button onclick="UpdateNewsBarText(document.getElementById('newsBarText').value)">Update News Bar Text</button>
-
-//     </br></br>
-//     <input type="text" id="twoLinerLine1" placeholder="Two Liner Line 1">
-//     <input type="text" id="twoLinerLine2" placeholder="Two Liner Line 2">
-//     </br>
-//     <button onclick="ShowTwoLiner(document.getElementById('twoLinerLine1').value, document.getElementById('twoLinerLine2').value)">Show Two Liner</button>
-//     <button onclick="HideTwoLiner()">Hide Two Liner</button>
-
-//     </br></br>
-//     <input type="text" id="oneLinerText" placeholder="One Liner Text">
-//     </br>
-//     <button onclick="ShowOneLiner(document.getElementById('oneLinerText').value)">Show One Liner</button>
-//     <button onclick="HideOneLiner()">Hide One Liner</button>
-
-//     </br></br>
-//     <button onclick="ClockOut()">Clock Out</button>
-//     <button onclick="ClockIn()">Clock In</button>
-
-//     </br></br>
-//     <button onclick="FlipperIn()">Flipper In</button>
-//     <button onclick="FlipperOut()">Flipper Out</button>
-//     <button onclick="FlipperAndLowerThirdIn()">Flipper in and Lowerthird In</button>
-
-//     </br></br>
-//     <button onclick="TileIn()">Tile In</button>
-//     <button onclick="TileOut()">Tile Out</button>
-
-//     </br></br>
-//     <button onclick="TextBadgeIn('COMING UP')">Text Badge In</button>
-//     <button onclick="TextBadgeOut()">Text Badge Out</button>
-
-//     </br></br>
-//     <input type="text" id="nameTwoLinerLine1" placeholder="Name Two Liner Line 1">
-//     <input type="text" id="nameTwoLinerLine2" placeholder="Name Two Liner Line 2">
-//     </br>
-//     <button onclick="ShowNameTwoLiner(document.getElementById('nameTwoLinerLine1').value, document.getElementById('nameTwoLinerLine2').value)">Show Name Two Liner</button>
-//     <button onclick="HideNameTwoLiner()">Hide Name Two Liner</button>
-
-//     </br></br>
-//     <input type="text" id="nameOneLinerLine1" placeholder="Name One Liner Line 1">  
-//     </br>
-//     <button onclick="ShowNameOneLiner(document.getElementById('nameOneLinerLine1').value)">Show Name One Liner</button>
-//     <button onclick="HideNameOneLiner()">Hide Name One Liner</button>
-
-//     </br></br>
-//     <input type="text" id="headlineOneLine" placeholder="Headline One Line">
-//     </br>
-//     <button onclick="HeadlineInOneLine(document.getElementById('headlineOneLine').value)">Headline In One Line</button>
-//     <button onclick="HeadlineOutOneLine()">Headline Out One Line</button>
+function openMenu()
+{
+    new WinBox("Controls", {
+        html:
+        `
     
-
-
-
-
-
-
-//     `,
-//     x: "center",
-//     y: "center",
-//     width: 800,
-//     height: 600,
-//     class: [ "no-min", "no-max", "no-full",  ]
-// });
+        <button onclick="LowerThirdOut()">Lower Third Out</button>
+        <button onclick="LowerThirdIn()">Lower Third In</button>
+        </br>
+        <button onclick="BeginTickerSequence()">Begin Ticker Sequence</button>
+        </br>
+        <input type="text" id="newsBarText" placeholder="News Bar Text">
+        <button onclick="UpdateNewsBarText(document.getElementById('newsBarText').value)">Update News Bar Text</button>
+    
+        </br></br>
+        <input type="text" id="twoLinerLine1" placeholder="Two Liner Line 1">
+        <input type="text" id="twoLinerLine2" placeholder="Two Liner Line 2">
+        </br>
+        <button onclick="ShowTwoLiner(document.getElementById('twoLinerLine1').value, document.getElementById('twoLinerLine2').value)">Show Two Liner</button>
+        <button onclick="HideTwoLiner()">Hide Two Liner</button>
+    
+        </br></br>
+        <input type="text" id="oneLinerText" placeholder="One Liner Text">
+        </br>
+        <button onclick="ShowOneLiner(document.getElementById('oneLinerText').value)">Show One Liner</button>
+        <button onclick="HideOneLiner()">Hide One Liner</button>
+    
+        </br></br>
+        <button onclick="ClockOut()">Clock Out</button>
+        <button onclick="ClockIn()">Clock In</button>
+    
+        </br></br>
+        <button onclick="FlipperIn()">Flipper In</button>
+        <button onclick="FlipperOut()">Flipper Out</button>
+        <button onclick="FlipperAndLowerThirdIn()">Flipper in and Lowerthird In</button>
+    
+        </br></br>
+        <button onclick="TileIn()">Tile In</button>
+        <button onclick="TileOut()">Tile Out</button>
+    
+        </br></br>
+        <button onclick="TextBadgeIn('COMING UP')">Text Badge In</button>
+        <button onclick="TextBadgeOut()">Text Badge Out</button>
+    
+        </br></br>
+        <input type="text" id="nameTwoLinerLine1" placeholder="Name Two Liner Line 1">
+        <input type="text" id="nameTwoLinerLine2" placeholder="Name Two Liner Line 2">
+        </br>
+        <button onclick="ShowNameTwoLiner(document.getElementById('nameTwoLinerLine1').value, document.getElementById('nameTwoLinerLine2').value)">Show Name Two Liner</button>
+        <button onclick="HideNameTwoLiner()">Hide Name Two Liner</button>
+    
+        </br></br>
+        <input type="text" id="nameOneLinerLine1" placeholder="Name One Liner Line 1">  
+        </br>
+        <button onclick="ShowNameOneLiner(document.getElementById('nameOneLinerLine1').value)">Show Name One Liner</button>
+        <button onclick="HideNameOneLiner()">Hide Name One Liner</button>
+    
+        </br></br>
+        <input type="text" id="headlineOneLine" placeholder="Headline One Line">
+        </br>
+        <button onclick="HeadlineInOneLine(document.getElementById('headlineOneLine').value)">Headline In One Line</button>
+        <button onclick="HeadlineOutOneLine()">Headline Out One Line</button>
+        
+    
+    
+    
+    
+    
+    
+        `,
+        x: "center",
+        y: "center",
+        width: 800,
+        height: 600,
+        class: [ "no-min", "no-max", "no-full",  ]
+    });
+}
 
 window.UpdateNewsBarText = UpdateNewsBarText;
 
@@ -1957,6 +1960,8 @@ window.TileOut = TileOut;
 
 window.HeadlineInOneLine = HeadlineInOneLine;
 window.HeadlineOutOneLine = HeadlineOutOneLine;
+
+window.openMenu = openMenu;
 
 
 
