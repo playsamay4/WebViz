@@ -2,6 +2,7 @@ var devToolsEnabled = false;
 var strapColor = {color: 0xb80000, alpha: 1};
 //var strapColor = {color: 0x000000, alpha: 0.8}
 
+
 //In states:
 var lowerThirdIn = false;
 var flipperIn = false;
@@ -30,8 +31,15 @@ globalThis.__PIXI_APP__ = app;
 //window.__PIXI_DEVTOOLS__ = {app: app};
 
 // Intialize the application.
-//await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
-await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
+
+
+if(window.location.hostname === "localhost")
+{
+    await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
+} else {
+    await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
+}
+
 
 
 PIXI.Assets.addBundle('fonts', [
@@ -1298,7 +1306,7 @@ async function HideOneLiner()
             duration: animDuration,
             ease: easeFunc,
         }, "<");
-        
+
     });
 
 
