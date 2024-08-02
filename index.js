@@ -84,14 +84,14 @@ newsBarLogoHeadline.ctr.addChild(newsBarLogoBoxHeadline);
 
 newsBarLogoHeadline.bbcLogo = new PIXI.Sprite(await PIXI.Assets.load('images/bbc.png'));
 newsBarLogoHeadline.bbcLogo.width = 560*0.21;
-newsBarLogoHeadline.bbcLogo.height = 160*0.21;
-newsBarLogoHeadline.bbcLogo.position.set(286,949);
+newsBarLogoHeadline.bbcLogo.height = 160*0.22;
+newsBarLogoHeadline.bbcLogo.position.set(286,0);
 newsBarLogoHeadline.ctr.addChild(newsBarLogoHeadline.bbcLogo);
 
 var newsBarLogoTextHeadline = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans', fontSize: 35, fontWeight: 'bold' } });
 newsBarLogoTextHeadline.resolution = 2;
 newsBarLogoTextHeadline.x = 286 + newsBarLogoHeadline.bbcLogo.width + 11;
-newsBarLogoTextHeadline.y = 943;
+newsBarLogoTextHeadline.y = 948;
 newsBarLogoHeadline.ctr.addChild(newsBarLogoTextHeadline);
 
 newsBarLogoBoxHeadline.rect(275, 942, newsBarLogoTextHeadline.width + 10 + newsBarLogoHeadline.bbcLogo.width + 20, 48);
@@ -197,7 +197,7 @@ async function HeadlineInOneLine(text)
     tl.to(headlineLeftBarBackingWhite, {
         y: 0,
         duration: 1,
-        ease: "power1.out",
+        ease: easeFunc,
     }, "<");
 
     tl.to(headlineFade, {
@@ -209,7 +209,7 @@ async function HeadlineInOneLine(text)
         y: 0,
         duration: 1,
         ease: easeFunc,
-    }, "<0.3");
+    }, "<0.2");
 
 }
 
@@ -1911,13 +1911,7 @@ function openMenu()
         </br>
         <button onclick="HeadlineInOneLine(document.getElementById('headlineOneLine').value)">Headline In One Line</button>
         <button onclick="HeadlineOutOneLine()">Headline Out One Line</button>
-        
-    
-    
-    
-    
-    
-    
+
         `,
         x: "center",
         y: "center",
@@ -1963,6 +1957,7 @@ window.HeadlineOutOneLine = HeadlineOutOneLine;
 
 window.openMenu = openMenu;
 
+openMenu();
 
 
 window.gsap = gsap;
