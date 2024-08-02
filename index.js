@@ -13,11 +13,16 @@ var oneLineIn = false;
 var twoLineIn = false;
 var nameTwoLineIn = false;
 var nameOneLineIn = false;
+var programmeBadgeIn = false;
 
 var headlineOneLineIn = false;
 var headlineTwoLineIn = false;
 
+var programmeBadgeEnabled = false;
 
+var programmeBadgeBgColor = 0xd00001;
+var programmeBadgeTextColor = 0xffffff;
+var programmeBadgeTextContent = "THE CONTEXT";
 
 // Create a PixiJS application.
 const app = new PIXI.Application();
@@ -25,8 +30,8 @@ globalThis.__PIXI_APP__ = app;
 //window.__PIXI_DEVTOOLS__ = {app: app};
 
 // Intialize the application.
-await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
-//await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
+//await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
+await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
 
 
 PIXI.Assets.addBundle('fonts', [
@@ -40,9 +45,9 @@ PIXI.Assets.addBundle('fonts', [
 await PIXI.Assets.loadBundle('fonts');
 
 
-const templateTexture = await PIXI.Assets.load('Template2.png');
+const templateTexture = await PIXI.Assets.load('ProgBadge.png');
 const template = new PIXI.Sprite(templateTexture);
-template.alpha = 0;
+//template.alpha = 0;
 app.stage.addChild(template);
 
 
@@ -480,7 +485,7 @@ textBadgeBacking.fill(0xffffff);
 //mask
 var textBadgeMask = new PIXI.Graphics()
 // Add the rectangular area to show
-    .rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942, textBadgeText.width + 24, 48)
+    .rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942, 1920, 48)
     .fill(0xffffff);
 textBadge.ctr.mask = textBadgeMask;
 textBadge.ctr.addChild(textBadgeMask);
@@ -490,8 +495,27 @@ textBadge.ctr.addChild(textBadgeMask);
 
 newsBar.ctr.addChild(textBadge.ctr);
 
+var programmeBadge = {};
+programmeBadge.ctr = new PIXI.Container(); programmeBadge.ctr.label = "Programme Badge";
+var programmeBadgeBacking = new PIXI.Graphics();
+//this one is aligned to the right, inside the safe area
+programmeBadgeBacking.rect(1920-275-10-192, 942+48, 1920, 48);
+programmeBadgeBacking.fill(0xffffff);
+programmeBadge.ctr.addChild(programmeBadgeBacking);
 
+var programmeBadgeText = new PIXI.Text({ text: 'THE CONTEXT', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 30} });
+programmeBadgeText.resolution = 2;
+//calculate the x position based on the width of the text
+programmeBadgeText.x = 1920-275-programmeBadgeText.width-11;
+programmeBadge.ctr.addChild(programmeBadgeText);
 
+programmeBadgeBacking.clear();
+programmeBadgeBacking.rect(1920-275-programmeBadgeText.width-24, 942+48, programmeBadgeText.width + 24, 48);
+programmeBadgeBacking.fill(0xd00001);
+
+programmeBadge.ctr.mask = textBadgeMask;
+
+newsBar.ctr.addChild(programmeBadge.ctr);
 
 
 
@@ -767,6 +791,12 @@ async function ShowTwoLiner(line1, line2)
         ease: easeFunc,
     }, "<");
 
+    tl.to(programmeBadge.ctr, {
+        y: -125,
+        duration: animDuration,
+        ease: easeFunc,
+    }, "<");
+
     tl.to(textLine2, {
         y: 930,
         duration: animDuration,
@@ -833,6 +863,13 @@ async function HideTwoLiner()
             ease: easeFunc,
             onComplete: () => resolve(true)
         }, "<");
+
+        tl.to(programmeBadge.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+
     });
 }
 
@@ -1184,6 +1221,13 @@ async function ShowOneLiner(text)
         ease: easeFunc,
     }, "<");
 
+    tl.to(programmeBadge.ctr, {
+        y: -125,
+        duration: animDuration,
+        ease: easeFunc,
+    }, "<");
+
+
 
     tl.to(singleText, {
         y: 858.5+singleLineYoffset,
@@ -1248,6 +1292,13 @@ async function HideOneLiner()
             ease: easeFunc,
             onComplete: () => resolve(true)
         }, "<");
+
+        tl.to(programmeBadge.ctr, {
+            y: 0,
+            duration: animDuration,
+            ease: easeFunc,
+        }, "<");
+        
     });
 
 
@@ -1267,22 +1318,18 @@ async function LowerThirdOut()
     flipperIn = false;
 
     let tl = newAnimWithDevTools("Lower Third Out");    
-
+    
+    ProgrammeBadgeOut();
     tl.to(flipperContent.ctr, {
         alpha: 0,
         duration: 0.4,
     });
-
-
+  
 
     await HideOneLiner();
     await HideTwoLiner();
     await HideNameTwoLiner();
     await HideNameOneLiner();
-
-  
-
-
 
     
     return new Promise(resolve => { // Wrap the animation in a Promise
@@ -1383,7 +1430,7 @@ function ClockIn()
     }, "<");
 }
 
-LowerThirdOutInstant();
+
 
 async function TextBadgeIn(text)
 {
@@ -1616,6 +1663,79 @@ function FlipperOut()
 }
 
 
+async function ProgrammeBadgeIn(text, bgColor, fgColor)
+{
+    if(programmeBadgeIn)
+    {
+        //update the text. Hide the badge and show it again
+        await ProgrammeBadgeOut();
+        ProgrammeBadgeIn(text, bgColor, fgColor);
+        return;
+    }
+        
+    programmeBadgeIn = true;
+
+    let tl = newAnimWithDevTools("Programme Badge In");
+
+    programmeBadgeTextContent = text;
+    programmeBadgeText.text = text;
+    programmeBadgeBacking.clear();
+    programmeBadgeText.style.fill = fgColor;
+    programmeBadgeText.x = 1920-275-programmeBadgeText.width-11;
+
+    programmeBadgeBgColor = bgColor;
+    programmeBadgeTextColor = fgColor;
+
+    var offset = {val: 48};
+
+    tl.to(offset, {
+        val: 0,
+        duration: 0.7,
+        ease: easeFunc,
+        onUpdate: function()
+        {
+            programmeBadgeBacking.clear();
+            programmeBadgeBacking.rect(1920-275-programmeBadgeText.width-24, 942+offset.val, programmeBadgeText.width + 24, 48);
+            programmeBadgeBacking.fill(programmeBadgeBgColor);
+
+            programmeBadgeText.y = 943+offset.val+4;
+
+            
+
+        }
+    });
+}
+
+async function ProgrammeBadgeOut()
+{
+    if(!programmeBadgeIn) return;
+    programmeBadgeIn = false;
+
+    return new Promise(resolve => { // Wrap the animation in a Promise
+
+        let tl = newAnimWithDevTools("Programme Badge Out");
+
+        var offset = { val: 0 };
+
+        tl.to(offset, {
+            val: 48,
+            duration: 0.7,
+            ease: easeFunc,
+            onUpdate: function() {
+                programmeBadgeBacking.clear();
+                programmeBadgeBacking.rect(1920-275-programmeBadgeText.width-24, 942 - offset.val, programmeBadgeText.width + 24, 48);
+                programmeBadgeBacking.fill(programmeBadgeBgColor);
+
+                programmeBadgeText.y = 943-offset.val+4;
+
+            },
+            onComplete: function() {
+                resolve(true);
+            }
+        });
+    });
+}
+
 async function LowerThirdIn()
 {
 
@@ -1668,6 +1788,12 @@ async function LowerThirdIn()
         onComplete: function()
         {
             flipperContent.ctr.mask = flipperContentMask;
+
+            //If programme badge is enabled, show it
+            if(programmeBadgeEnabled)
+            {
+                ProgrammeBadgeIn(programmeBadgeTextContent, programmeBadgeBgColor, programmeBadgeTextColor);
+            }
         }
     }, "<");
 
@@ -1912,9 +2038,22 @@ function openMenu()
         <button onclick="HeadlineInOneLine(document.getElementById('headlineOneLine').value)">Headline In One Line</button>
         <button onclick="HeadlineOutOneLine()">Headline Out One Line</button>
 
+        </br></br>
+        <input type="text" id="programmeBadgeText" placeholder="Programme Badge Text">
+        <input type="color" id="programmeBadgeBgColor" value="#000000">
+        <input type="color" id="programmeBadgeFgColor" value="#ffffff">
+        </br>
+        <button onclick="ProgrammeBadgeIn(document.getElementById('programmeBadgeText').value, document.getElementById('programmeBadgeBgColor').value, document.getElementById('programmeBadgeFgColor').value)">Programme Badge In</button>
+        <button onclick="ProgrammeBadgeOut()">Programme Badge Out</button>
+        </br>
+        <button onclick="toggleProgrammeBadge()">Toggle Programme Badge</button>
+        
+
+
+
         `,
-        x: "center",
-        y: "center",
+        x: "0",
+        y: "0",
         width: 800,
         height: 600,
         class: [ "no-min", "no-max", "no-full",  ]
@@ -1940,6 +2079,10 @@ window.HideNameOneLiner = HideNameOneLiner;
 window.ClockOut = ClockOut;
 window.ClockIn = ClockIn;
 
+window.ProgrammeBadgeIn = ProgrammeBadgeIn;
+window.ProgrammeBadgeOut = ProgrammeBadgeOut;
+window.toggleProgrammeBadge = function() { programmeBadgeEnabled = !programmeBadgeEnabled; }
+
 
 
 window.TextBadgeIn = TextBadgeIn;
@@ -1961,3 +2104,6 @@ openMenu();
 
 
 window.gsap = gsap;
+
+/////////////////
+LowerThirdOutInstant();
