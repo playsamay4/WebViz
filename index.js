@@ -1464,7 +1464,7 @@ async function TextBadgeIn(text)
         onUpdate: function()
         {
             textBadgeBacking.clear();
-            textBadgeBacking.rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942+offset.val, 1920, 48);
+            textBadgeBacking.rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942+offset.val, textBadgeText.width + 25, 48);
             textBadgeBacking.fill(0xffffff);
 
             
