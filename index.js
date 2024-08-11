@@ -31,15 +31,8 @@ globalThis.__PIXI_APP__ = app;
 //window.__PIXI_DEVTOOLS__ = {app: app};
 
 // Intialize the application.
-
-
-if(window.location.hostname === "localhost")
-{
-    await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
-} else {
-    await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
-}
-
+await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
+//await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
 
 
 PIXI.Assets.addBundle('fonts', [
@@ -53,9 +46,9 @@ PIXI.Assets.addBundle('fonts', [
 await PIXI.Assets.loadBundle('fonts');
 
 
-const templateTexture = await PIXI.Assets.load('ProgBadge.png');
+const templateTexture = await PIXI.Assets.load('fraiser.png');
 const template = new PIXI.Sprite(templateTexture);
-//template.alpha = 0;
+template.alpha = 1;
 app.stage.addChild(template);
 
 
@@ -511,7 +504,7 @@ programmeBadgeBacking.rect(1920-275-10-192, 942+48, 1920, 48);
 programmeBadgeBacking.fill(0xffffff);
 programmeBadge.ctr.addChild(programmeBadgeBacking);
 
-var programmeBadgeText = new PIXI.Text({ text: 'THE CONTEXT', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 30} });
+var programmeBadgeText = new PIXI.Text({ text: 'THE CONTEXT', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans', fontWeight:"bold", fontSize: 30} });
 programmeBadgeText.resolution = 2;
 //calculate the x position based on the width of the text
 programmeBadgeText.x = 1920-275-programmeBadgeText.width-11;
@@ -547,7 +540,7 @@ var connectingText = new PIXI.Text({ text: 'No connection active', style: {fill:
 connectingText.resolution = 2;
 connectingText.x = 1920/2 - connectingText.width/2;
 connectingText.y = 1080/2 - connectingText.height/2;
-app.stage.addChild(connectingText);
+//app.stage.addChild(connectingText);
 
 
 
@@ -643,6 +636,13 @@ function connectWebSocket() {
         {
             HeadlineOutOneLine();
         }   
+        else if(message.type == "[STRAPS OFF]")
+        {
+            HideOneLiner();
+            HideTwoLiner();
+            HideNameOneLiner();
+            HideNameTwoLiner();
+        }
         else if(message.type == "[TICKER ON]")
         {
             FlipperIn();
@@ -659,9 +659,51 @@ function connectWebSocket() {
         {
             LowerThirdIn();
         }
+        else if(message.type == "[SET BADGE]")
+        {
+            //split the message by \\
+            var parts = message.data.split("\\");
+            //set the text
+            programmeBadgeTextContent = parts[0];
+        
+            programmeBadgeBgColor = parseInt(parts[1], 16);
+            programmeBadgeTextColor = parseInt(parts[2], 16);
+            
+
+            programmeBadgeText.text = programmeBadgeTextContent;
+
+            programmeBadgeEnabled = true;
+
+            console.log("Set badge to: " + programmeBadgeTextContent + " with bg color: " + programmeBadgeBgColor + " and text color: " + programmeBadgeTextColor);
+            console.log(parts);
+        }
+        else if (message.type == "[ALL OFF]")
+        {
+            LowerThirdOut();
+            FlipperOut();
+            TileOut();
+            HeadlineOutOneLine();
+        }
         else if(message.type == "HEAD")
         {
             HeadlineInOneLine(message.data  );
+        } else if(message.type == "BIG STRAP")
+        {
+            ShowOneLiner(message.data);
+        }else if(message.type == "NAME")
+        {
+            //split the message by \\
+            var parts = message.data.split("\\");
+            
+            if(parts.length == 1)
+            {
+                ShowNameOneLiner(parts[0]);
+            }
+            else if(parts.length == 2)
+            {
+                ShowNameTwoLiner(parts[0], parts[1]);
+            }
+            
         }
 
 
@@ -1820,6 +1862,24 @@ async function LowerThirdIn()
 
 }
 
+//every second, update the clock
+setInterval(function()
+{
+    //HH(24):MM
+    let date = new Date();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    if(hours < 10)
+        hours = "0" + hours;
+    if(minutes < 10)
+        minutes = "0" + minutes;
+
+    clockText.text = hours + ":" + minutes;
+}, 1000);
+
+
+
 function UpdateNewsBarText(text)
 {
     //Flip out the news bar logo stuff
@@ -2067,6 +2127,7 @@ function openMenu()
         class: [ "no-min", "no-max", "no-full",  ]
     });
 }
+openMenu();
 
 window.UpdateNewsBarText = UpdateNewsBarText;
 
@@ -2108,7 +2169,7 @@ window.HeadlineOutOneLine = HeadlineOutOneLine;
 
 window.openMenu = openMenu;
 
-openMenu();
+//openMenu();
 
 
 window.gsap = gsap;
