@@ -96,7 +96,7 @@ newsBarLogoHeadline.bbcLogo.height = 160*0.22;
 newsBarLogoHeadline.bbcLogo.position.set(286,0);
 newsBarLogoHeadline.ctr.addChild(newsBarLogoHeadline.bbcLogo);
 
-var newsBarLogoTextHeadline = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans', fontSize: 35, fontWeight: 'bold' } });
+var newsBarLogoTextHeadline = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 35} });
 newsBarLogoTextHeadline.resolution = 2;
 newsBarLogoTextHeadline.x = 286 + newsBarLogoHeadline.bbcLogo.width + 11;
 newsBarLogoTextHeadline.y = 948;
