@@ -456,7 +456,7 @@ newsBarLogo.bbcLogo.height = 160*0.21;
 newsBarLogo.bbcLogo.position.set(286,949);
 newsBarLogo.ctr.addChild(newsBarLogo.bbcLogo);
 
-var newsBarLogoText = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans', fontSize: 35, fontWeight: 'bold' } });
+var newsBarLogoText = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 35 } });
 newsBarLogoText.resolution = 2;
 newsBarLogoText.x = 286 + newsBarLogo.bbcLogo.width + 11;
 newsBarLogoText.y = 943;
