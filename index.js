@@ -41,7 +41,7 @@ PIXI.Assets.addBundle('fonts', [
     { alias: 'Reith Serif Medium', src: 'fonts/ReithSerifMd.ttf' },
     { alias : 'BBC Reith Serif', src: 'fonts/ReithSerifRg.ttf'},
     { alias : 'BBC Reith Sans Medium', src: 'fonts/BBC Reith Sans Medium.ttf'},
-    { alias : 'BBC Reith Sans', src: 'fonts/ReithSansRG.ttf'},
+    { alias : 'BBC Reith Sans', src: 'fonts/ReithSansRg.ttf'},
 ]);
 
 
