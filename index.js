@@ -39,7 +39,9 @@ PIXI.Assets.addBundle('fonts', [
     { alias: 'Reith Sans Bold', src: 'fonts/ReithSansBd.ttf' },
     { alias: 'Reith Sans Medium', src: 'fonts/ReithSansMd.ttf' },
     { alias: 'Reith Serif Medium', src: 'fonts/ReithSerifMd.ttf' },
-    { alias : 'BBC Reith Serif', src: 'fonts/ReithSerifRg.ttf'}
+    { alias : 'BBC Reith Serif', src: 'fonts/ReithSerifRg.ttf'},
+    { alias : 'BBC Reith Sans Medium', src: 'fonts/BBC Reith Sans Medium.ttf'},
+    { alias : 'BBC Reith Sans', src: 'fonts/ReithSansRG.ttf'},
 ]);
 
 
@@ -410,7 +412,7 @@ newsBar.ctr.mask = newsBarMask;
 
 
 
-var textLine1 = new PIXI.Text({ text: 'Russian debt payments', style: {fill: "#ffffff", fontFamily: 'BBC Reith Serif Medium', fontSize: 55 } }); textLine1.id = "Text Line 1";
+var textLine1 = new PIXI.Text({ text: 'Russian debt payments', style: {fill: "#ffffff", fontFamily: 'Reith Serif Medium', fontSize: 55 } }); textLine1.id = "Text Line 1";
 textLine1.resolution = 2;
 textLine1.x = 286;
 textLine1.y = 985;
@@ -431,7 +433,7 @@ var nameStrapMask = new PIXI.Graphics()
 textLine1.mask = nameStrapMask;
 textLine2.mask = nameStrapMask;
 
-var singleText = new PIXI.Text({ text: 'UK Deputy PM Raab resigns', style: {fill: "#ffffff", fontFamily: 'BBC Reith Serif Medium', fontSize: 92 } }); singleText.id = "Single Text";
+var singleText = new PIXI.Text({ text: 'UK Deputy PM Raab resigns', style: {fill: "#ffffff", fontFamily: 'Reith Serif Medium', fontSize: 92 } }); singleText.id = "Single Text";
 singleText.resolution = 2;
 singleText.x = 281.5;
 singleText.y = 1014;
