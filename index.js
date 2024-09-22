@@ -16,8 +16,12 @@ var nameTwoLineIn = false;
 var nameOneLineIn = false;
 var programmeBadgeIn = false;
 
+
 var headlineOneLineIn = false;
 var headlineTwoLineIn = false;
+
+var leftLiveBugIn = false; 
+var rightLiveBugIn = false;
 
 var programmeBadgeEnabled = false;
 
@@ -25,14 +29,17 @@ var programmeBadgeBgColor = 0xd00001;
 var programmeBadgeTextColor = 0xffffff;
 var programmeBadgeTextContent = "THE CONTEXT";
 
+var leftLiveBugTimeOffset = 0;
+var rightLiveBugTimeOffset = 0;
+
 // Create a PixiJS application.
 const app = new PIXI.Application();
 globalThis.__PIXI_APP__ = app;
 //window.__PIXI_DEVTOOLS__ = {app: app};
 
 // Intialize the application.
-await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
-//await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
+//await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
+await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
 
 
 PIXI.Assets.addBundle('fonts', [
@@ -42,11 +49,33 @@ PIXI.Assets.addBundle('fonts', [
     { alias : 'BBC Reith Serif', src: 'fonts/ReithSerifRg.ttf'}
 ]);
 
+var config = {}
+config.tickerTimeScale = 1.5;
+
+function configure2023Style()
+{
+    config.tickerTimeScale = 1.5;
+    strapColor = {color: 0xb80000, alpha: 1};
+}
+
+async function configure2022Style()
+{
+    config.tickerTimeScale = 1;
+    strapColor = {color: 0x000000, alpha: 0.8};
+
+    //redraw, hide lowerthird backing
+    await LowerThirdOut();
+
+    newsBarBacking.clear();
+    newsBarBacking.rect(0, 942, 1920, 48);
+    newsBarBacking.fill(strapColor);
+
+}
 
 await PIXI.Assets.loadBundle('fonts');
 
 
-const templateTexture = await PIXI.Assets.load('fraiser.png');
+const templateTexture = await PIXI.Assets.load('LiveAndBkfastclock.png');
 const template = new PIXI.Sprite(templateTexture);
 template.alpha = 1;
 app.stage.addChild(template);
@@ -530,6 +559,75 @@ var tile = new PIXI.Sprite(await PIXI.Assets.load('tiles/uk_reith.png')); tile.i
 tile.alpha = 0;
 app.stage.addChild(tile);
 
+var leftLiveBug = {};
+    leftLiveBug.ctr = new PIXI.Container(); leftLiveBug.ctr.label = "Left Live Bug";
+    var leftLiveBugBacking = new PIXI.Graphics();
+    leftLiveBugBacking.rect(275 , 45, 90, 45);
+    leftLiveBugBacking.fill(0xb80000);
+    leftLiveBug.ctr.addChild(leftLiveBugBacking);
+
+    var leftLiveBugLiveText = new PIXI.Text({ text: 'LIVE', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 30.5} });
+    leftLiveBugLiveText.resolution = 2;
+    leftLiveBugLiveText.x = 275 + 10;
+    leftLiveBugLiveText.y = 47;
+    leftLiveBug.ctr.addChild(leftLiveBugLiveText);
+
+    var leftLiveBugLocatorText = new PIXI.Text({ text: 'MOSCOW', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 31} });
+    leftLiveBugLocatorText.resolution = 2;
+    leftLiveBugLocatorText.x = 375;
+    leftLiveBugLocatorText.y = 47;
+
+    var leftLiveBugLocatorBacking = new PIXI.Graphics(); leftLiveBugLocatorBacking.alpha = 0.65;
+    leftLiveBugLocatorBacking.rect(365, 45, leftLiveBugLocatorText.width + 20, 45);
+    leftLiveBugLocatorBacking.fill(0x000000);
+    leftLiveBug.ctr.addChild(leftLiveBugLocatorBacking);
+
+    var leftLiveBugLocatorUnderline = new PIXI.Graphics()
+    leftLiveBugLocatorUnderline.rect(365, 87, leftLiveBugLocatorText.width + 20, 3);
+    leftLiveBugLocatorUnderline.fill(0xb80000);
+    leftLiveBug.ctr.addChild(leftLiveBugLocatorUnderline);
+
+    leftLiveBug.ctr.addChild(leftLiveBugLocatorText);
+
+
+        var leftLiveBugClockContainer = new PIXI.Container(); leftLiveBugClockContainer.label = "Left Live Bug Clock";
+            var leftLiveBugClockText = new PIXI.Text({ text: '17:12', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 31} });
+            leftLiveBugClockText.resolution = 2;    
+            leftLiveBugClockText.x = 365+ leftLiveBugLocatorText.width+28 + 10;
+            leftLiveBugClockText.y = 47;
+
+
+            var leftLiveBugClockBacking = new PIXI.Graphics(); leftLiveBugClockBacking.alpha = 0.65;
+            leftLiveBugClockBacking.rect(365+ leftLiveBugLocatorText.width+28, 45, leftLiveBugClockText.width+20, 45);
+            leftLiveBugClockBacking.fill(0x000000);
+            leftLiveBugClockContainer.addChild(leftLiveBugClockBacking);
+
+            leftLiveBugClockContainer.addChild(leftLiveBugClockText);
+
+            var leftLiveBugClockUnderline = new PIXI.Graphics()
+            leftLiveBugClockUnderline.rect(365+ leftLiveBugLocatorText.width+28, 87, leftLiveBugClockText.width+20, 3);
+            leftLiveBugClockUnderline.fill(0xb80000);
+            leftLiveBugClockContainer.addChild(leftLiveBugClockUnderline);
+        leftLiveBug.ctr.addChild(leftLiveBugClockContainer);
+
+
+
+
+
+
+    var leftLiveBugMask = new PIXI.Graphics()
+    // Add the rectangular area to show
+        .rect(275, 45, 1920, 45)
+        .fill(0xffffff);
+    leftLiveBug.ctr.mask = leftLiveBugMask;
+
+
+
+app.stage.addChild(leftLiveBug.ctr);
+leftLiveBug.ctr.y = 45;
+
+
+
 var connectingIndicator = new PIXI.Graphics();
 connectingIndicator.rect(0, 0, 1920, 1080);
 connectingIndicator.fill(0x000000);
@@ -677,6 +775,24 @@ function connectWebSocket() {
             console.log("Set badge to: " + programmeBadgeTextContent + " with bg color: " + programmeBadgeBgColor + " and text color: " + programmeBadgeTextColor);
             console.log(parts);
         }
+        else if(message.type == "Style")
+            {
+                //split the message by \\
+                var parts = message.data.split("\\");
+                //set the text
+                if (parts[0] == "2023")
+                {
+                    configure2023Style();
+                }
+                else if (parts[0] == "Channel")
+                {
+                    configure2022Style();
+                }
+                else {
+                    configure2022Style();
+                }
+            
+            }
         else if (message.type == "[ALL OFF]")
         {
             LowerThirdOut();
@@ -704,6 +820,13 @@ function connectWebSocket() {
                 ShowNameTwoLiner(parts[0], parts[1]);
             }
             
+        }
+        else if(message.type == "NAME OFF")
+        {
+            if(nameOneLineIn)
+                HideNameOneLiner();
+            if(nameTwoLineIn)
+                HideNameTwoLiner();
         }
 
 
@@ -743,6 +866,97 @@ gsap.registerPlugin(CustomEase)
 //  GSDevTools.create({id: "main"});
 
 let easeFunc = CustomEase.create("custom", "M0,0 C0.2,0 0.2,1 0.8,1 1,1 1,1 1,1");
+
+async function LeftLiveBugOut()
+{
+    if(!leftLiveBugIn)
+        return;
+    leftLiveBugIn = false;
+
+    return new Promise(resolve => {
+            
+            let tl = newAnimWithDevTools("Left Live Bug Out");
+    
+            tl.to(leftLiveBug.ctr, {
+                y: -45,
+                duration: 0.5,
+                ease: easeFunc,
+                onComplete: () => resolve(true)
+            });
+        });
+}
+
+async function LeftLiveBugIn(locatorText,showClock, clockOffset)
+{
+    if(leftLiveBugIn)
+    {
+        await LeftLiveBugOut();
+        LeftLiveBugIn(locatorText,showClock, clockOffset);
+        return;
+    }
+
+    leftLiveBugIn = true;
+
+
+    leftLiveBugLocatorText.text = locatorText;
+
+    leftLiveBugTimeOffset = clockOffset ?? 0;
+    setLiveBugClocks();
+    
+    //redraw the backing and underline.
+    leftLiveBugLocatorBacking.clear();
+    leftLiveBugLocatorBacking.rect(365, 45, leftLiveBugLocatorText.width + 20, 45);
+    leftLiveBugLocatorBacking.fill(0x000000);
+
+    leftLiveBugLocatorUnderline.clear();
+    leftLiveBugLocatorUnderline.rect(365, 87, leftLiveBugLocatorText.width + 20, 3);
+    leftLiveBugLocatorUnderline.fill(0xb80000);
+
+    //redraw the left live bug clock
+    leftLiveBugClockText.x = 365+ leftLiveBugLocatorText.width+28 + 10;
+    
+    leftLiveBugClockBacking.clear();
+    leftLiveBugClockBacking.rect(365+ leftLiveBugLocatorText.width+28, 45, leftLiveBugClockText.width+20, 45);
+    leftLiveBugClockBacking.fill(0x000000);
+
+    leftLiveBugClockUnderline.clear();
+    leftLiveBugClockUnderline.rect(365+ leftLiveBugLocatorText.width+28, 87, leftLiveBugClockText.width+20, 3);
+    leftLiveBugClockUnderline.fill(0xb80000);
+
+    leftLiveBugClockContainer.visible = showClock;
+
+    leftLiveBug.ctr.y = 45;
+
+    if(locatorText.trim() == "")
+        {
+            leftLiveBugLocatorUnderline.clear();
+            leftLiveBugLocatorBacking.clear();
+        }
+    
+
+    return new Promise(resolve => {
+
+        let tl = newAnimWithDevTools("Left Live Bug In");
+
+        tl.to(leftLiveBug.ctr, {
+            y: 0,
+            duration: 0.5,
+            ease: easeFunc,
+            onComplete: () => resolve(true)
+        });
+    });
+
+
+
+    
+    
+
+
+
+
+
+
+}
 
 async function TileIn()
 {
@@ -1386,7 +1600,7 @@ async function LowerThirdOut()
 
         
         //NEW STYLE LOWERTHIRDS USE: tl.timeScale(1.5);
-        //tl.timeScale(1.5);
+        tl.timeScale(config.tickerTimeScale);
         if(gsap.getById("Ticker Sequence") != undefined)
         {
             gsap.getById("Ticker Sequence").kill();
@@ -1531,7 +1745,7 @@ async function TextBadgeOut()
             ease: easeFunc,
             onUpdate: function() {
                 textBadgeBacking.clear();
-                textBadgeBacking.rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942 - offset.val, 1920, 48);
+                textBadgeBacking.rect(275 + newsBarLogoText.width + 10 + newsBarLogo.bbcLogo.width + 20, 942 - offset.val, textBadgeText.width + 24, 48);
                 textBadgeBacking.fill(0xffffff);
 
                 textBadgeText.y = 943 - offset.val;
@@ -1876,7 +2090,30 @@ setInterval(function()
         minutes = "0" + minutes;
 
     clockText.text = hours + ":" + minutes;
+
+    //Set the live bug clocks using the offsets
+    //broke this out into its own function so  i can  call it when we show the bug as well
+    setLiveBugClocks();
+
+    
 }, 1000);
+
+
+function setLiveBugClocks()
+{
+    let leftOffsetDate = new Date();
+        leftOffsetDate.setHours(leftOffsetDate.getHours()+leftLiveBugTimeOffset);
+    
+        let hoursLeftOffset = leftOffsetDate.getHours();
+        let minutesLeftOffset = leftOffsetDate.getMinutes();
+    
+    if(hoursLeftOffset < 10)
+        hoursLeftOffset = "0" + hoursLeftOffset;
+    if(minutesLeftOffset < 10)
+        minutesLeftOffset = "0" + minutesLeftOffset;
+    
+    leftLiveBugClockText.text = hoursLeftOffset + ":" + minutesLeftOffset;
+}
 
 
 
@@ -2115,19 +2352,26 @@ function openMenu()
         <button onclick="ProgrammeBadgeOut()">Programme Badge Out</button>
         </br>
         <button onclick="toggleProgrammeBadge()">Toggle Programme Badge</button>
+        </br></br>
+        <input type="text" id="leftLiveBugLocatorText" placeholder="Left Live bug Locator text"> Clock Offset </input>  
+        <input type="number" id="leftLiveBugClockOffset"  name="quantity" min="-24" max="24">Clock On/Off</input>
+        
+        <input type="checkbox" id="leftLiveBugClockOnOff" name="clockOnOff" value="clockOnOff">
+        <button onclick="LeftLiveBugIn(document.getElementById('leftLiveBugLocatorText').value,document.getElementById('leftLiveBugClockOnOff').checked, parseInt(document.getElementById('leftLiveBugClockOffset').value))">Left Live Bug In</button>
+        <button onclick="LeftLiveBugOut()">Left Live Bug Out</button>
         
 
 
 
         `,
-        x: "0",
+        x: "900",
         y: "0",
         width: 800,
-        height: 600,
+        height: 800,
         class: [ "no-min", "no-max", "no-full",  ]
     });
 }
-openMenu();
+//openMenu();
 
 window.UpdateNewsBarText = UpdateNewsBarText;
 
@@ -2167,9 +2411,12 @@ window.TileOut = TileOut;
 window.HeadlineInOneLine = HeadlineInOneLine;
 window.HeadlineOutOneLine = HeadlineOutOneLine;
 
+window.LeftLiveBugIn = LeftLiveBugIn;
+window.LeftLiveBugOut = LeftLiveBugOut;
+
 window.openMenu = openMenu;
 
-//openMenu();
+openMenu();
 
 
 window.gsap = gsap;
