@@ -7,8 +7,7 @@ import { LeftLiveBug } from './components/leftLiveBug.js';
 import { LowerThirdFull } from './components/LowerThird.js';
 import { config } from './utils/config.js';
 
-var devToolsEnabled = false;
-
+window.devToolsEnabled = false;
 
 
 // Create a PixiJS application.
@@ -19,7 +18,6 @@ globalThis.__PIXI_APP__ = app;
 // Intialize the application.
 await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
 //await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
-
 
 
 var templateTexture;
@@ -65,6 +63,25 @@ await PIXI.Assets.addBundle('fonts', {
 });
 await PIXI.Assets.loadBundle('fonts');
 
+ 
+await PIXI.BitmapFont.install({
+    name: 'Reith Serif Regular Bitmap',
+    style:{
+        fontFamily: 'Reith Serif Regular',
+        fill: "#ffffff",
+        fontSize: 128,
+
+    }
+});
+await PIXI.BitmapFont.install({
+    name: 'Reith Serif Medium Bitmap',
+    style:{
+        fontFamily: 'Reith Serif Medium',
+        fill: "#ffffff",
+        fontSize: 92,
+
+    }
+});
 
 
 

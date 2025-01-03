@@ -15,6 +15,7 @@ export class Headline {
         });
 
         this.init(app);
+        
     }
 
     async init(app) {
@@ -32,17 +33,16 @@ export class Headline {
 
         // Initialize text components
         this.textLine1Offset = { y: 0 };
-        this.textLine1 = new PIXI.Text({ 
+        this.textLine1 = new PIXI.BitmapText({ 
             text: 'Athletics transgender ruling', 
             style: {
                 fill: "#ffffff", 
-                fontFamily: 'Reith Serif Regular', 
-                fontSize: 55 
+                fontFamily: 'Reith Serif Regular Bitmap', 
+                fontSize: 128 
             }
         });
         this.textLine1.id = "Headline Text Line 1";
         this.textLine1.resolution = 2;
-        this.textLine1.style.padding = 20;
         this.textLine1.x = 280;
         this.textLine1.y = 856;
         this.ctr.addChild(this.textLine1);
@@ -123,7 +123,6 @@ export class Headline {
         this.outInstant();
 
                 
-        //This would be run when text is updated, but for now we will just run it every 10ms
         setInterval(async () => {
             this.adjust();
         }, 10);

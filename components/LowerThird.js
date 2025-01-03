@@ -155,9 +155,15 @@ class NewsBar {
         this.textLine1.mask = this.nameStrapMask;
         this.textLine2.mask = this.nameStrapMask;
 
-        this.singleText = new PIXI.Text({ text: 'UK Deputy PM Raab resigns', style: {fill: "#ffffff", fontFamily: 'Reith Serif Medium', fontSize: 92 } }); 
+        this.singleText = new PIXI.BitmapText({ 
+                text: 'UK Deputy PM Raab resigns', 
+                style: {
+                    fill: "#ffffff", 
+                    fontFamily: 'Reith Serif Medium Bitmap', 
+                    fontSize: 92 
+                } 
+            }); 
         this.singleText.id = "Single Text";
-        this.singleText.resolution = 2;
         this.singleText.x = 281.5;
         this.singleText.y = 1014;
         //target 858.5
