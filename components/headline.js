@@ -64,7 +64,7 @@ export class Headline {
         this.newsBarLogoHeadline.bbcLogo.position.set(286,0);
         this.newsBarLogoHeadline.ctr.addChild(this.newsBarLogoHeadline.bbcLogo);
 
-        this.newsBarLogoTextHeadline = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'Reith Sans Regular', fontSize: 35, fontWeight: 'bold' } });
+        this.newsBarLogoTextHeadline = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'Reith Sans Bold', fontSize: 35} });
         this.newsBarLogoTextHeadline.resolution = 2;
         this.newsBarLogoTextHeadline.x = 286 + this.newsBarLogoHeadline.bbcLogo.width + 11;
         this.newsBarLogoTextHeadline.y = 948;
