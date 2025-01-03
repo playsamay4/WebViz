@@ -1040,6 +1040,10 @@ export class LowerThirdFull {
 
             var offset = { val: 0 };
 
+            gsap.delayedCall(0.5, () => {
+                resolve(true);
+            });
+
             tl.to(offset, {
                 val: 52,
                 duration: 0.7,
@@ -1051,7 +1055,6 @@ export class LowerThirdFull {
 
                     this.newsBar.textBadgeText.y = 943 - offset.val;
                 },
-                onComplete: () => resolve(true) // Resolve the Promise with true when the animation completes
             });
         });
     }
