@@ -156,7 +156,7 @@ export class LeftLiveBug {
                     ease: easeFunc,
                     onComplete: () => {
                         resolve(true)
-                        //RemoveFromGraphicsStatus("LIVE");
+                        RemoveFromGraphicsStatus("LIVE");
                     }
                 });
             });   

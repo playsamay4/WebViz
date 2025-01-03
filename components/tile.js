@@ -1,5 +1,6 @@
 import { newAnimWithDevTools } from "../utils/animations.js";
 import { vizEvents } from "../utils/events.js";
+import { RemoveFromGraphicsStatus } from "../utils/websocket.js";
 export class Tile 
 {
     constructor(app, tileType)
@@ -59,7 +60,10 @@ export class Tile
             tl.to(this.sprite, {
                 alpha: 0,
                 duration: 0.4,
-                onComplete: () => resolve(true)
+                onComplete: () => {
+                    RemoveFromGraphicsStatus(".5")
+                    resolve(true);
+                }
             });
         });
     }
