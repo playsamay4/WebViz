@@ -195,7 +195,6 @@ export class Headline {
 
     async outOneLine() {
         if (!this.isIn) return;
-        this.isIn = false;
 
         let tl = newAnimWithDevTools("Headline Out One Line");
 
