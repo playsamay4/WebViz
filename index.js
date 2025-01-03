@@ -39,18 +39,7 @@ app.stage.addChild(template);
 
 
 
-
-const tileComponent = new Tile(app, "uk_reith");
-const headlineComponent = new Headline(app);
-
-const leftLiveBugComponent = new LeftLiveBug(app);
-
-const lowerThird = new LowerThirdFull(app);
-
-
-
-
-PIXI.Assets.addBundle('fonts', {
+await PIXI.Assets.addBundle('fonts', {
     ReithSansRegular: {
         src: 'fonts/ReithSansRg.ttf',
         data: { family: 'Reith Sans Regular' },
@@ -75,6 +64,17 @@ PIXI.Assets.addBundle('fonts', {
 
 });
 await PIXI.Assets.loadBundle('fonts');
+
+
+
+
+const tileComponent = new Tile(app, "uk_reith");
+const headlineComponent = new Headline(app);
+
+const leftLiveBugComponent = new LeftLiveBug(app);
+
+const lowerThird = new LowerThirdFull(app);
+
 
 
 
