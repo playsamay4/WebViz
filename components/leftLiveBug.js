@@ -19,13 +19,13 @@ export class LeftLiveBug {
         this.backing.fill(0xb80000);
         this.ctr.addChild(this.backing);
 
-        this.liveText = new PIXI.Text({ text: 'LIVE', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans Medium', fontSize: 30.5} });
+        this.liveText = new PIXI.Text({ text: 'LIVE', style: {fill: "#ffffff", fontFamily: 'Reith Sans Medium', fontSize: 30.5} });
         this.liveText.resolution = 2;
         this.liveText.x = 275 + 10;
         this.liveText.y = 47;
         this.ctr.addChild(this.liveText);
 
-        this.locatorText = new PIXI.Text({ text: 'MOSCOW', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans', fontSize: 31} });
+        this.locatorText = new PIXI.Text({ text: 'MOSCOW', style: {fill: "#ffffff", fontFamily: 'Reith Sans Regular', fontSize: 31} });
         this.locatorText.resolution = 2;
         this.locatorText.x = 375;
         this.locatorText.y = 47;
@@ -43,7 +43,7 @@ export class LeftLiveBug {
         this.ctr.addChild(this.locatorText);
         
         this.clockContainer = new PIXI.Container(); this.clockContainer.label = "Left Live Bug Clock";
-            this.clockText = new PIXI.Text({ text: '17:12', style: {fill: "#ffffff", fontFamily: 'BBC Reith Sans', fontSize: 31} });
+            this.clockText = new PIXI.Text({ text: '17:12', style: {fill: "#ffffff", fontFamily: 'Reith Sans Regular', fontSize: 31} });
             this.clockText.resolution = 2;    
             this.clockText.x = 365+ this.locatorText.width+28 + 10;
             this.clockText.y = 47;
