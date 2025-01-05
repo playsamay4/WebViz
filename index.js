@@ -85,21 +85,48 @@ await PIXI.BitmapFont.install({
 
 
 
-const tileComponent = new Tile(app, "uk_reith");
-const headlineComponent = new Headline(app);
+let tileComponent = new Tile(app, "uk_reith");
+let headlineComponent = new Headline(app, "NEWS");
 
-const leftLiveBugComponent = new LeftLiveBug(app);
+let leftLiveBugComponent = new LeftLiveBug(app);
 
-const lowerThird = new LowerThirdFull(app);
+let lowerThird = new LowerThirdFull(app, "NEWS");
 
 
+async function configureWorldStyle()
+{
+    config.tickerTimeScale = 1;
+    config.flipperClockShouldShow = false;
+    config.tickerOffText = "bbc.com/news";
+    config.strapColor = {color: 0x000000, alpha: 0.75};
+    lowerThird.updateNewsBarText("WORLD NEWS");
+    tileComponent.setTile("world_reith");
+    headlineComponent.newsBarLogoTextHeadline.text = "WORLD NEWS";
 
+
+    //redraw, hide lowerthird backing
+    await lowerThird.lowerThirdOut();
+
+    lowerThird.newsBar.backing.clear();
+    lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
+    lowerThird.newsBar.backing.fill(config.strapColor);
+
+    //change programmeBadgeText font
+    lowerThird.newsBar.programmeBadgeText.style.fontFamily = "Reith Sans Medium";
+    
+}
 
 
 async function configure2023Style()
 {
     config.tickerTimeScale = 1.5;
+    config.flipperClockShouldShow = true;
+    config.tickerOffText = "bbc.co.uk/news";
     config.strapColor = {color: 0xb80000, alpha: 1};
+    lowerThird.updateNewsBarText("NEWS");
+    headlineComponent.newsBarLogoTextHeadline.text = "NEWS";
+    tileComponent.setTile("uk_reith");
+
 
     //redraw, hide lowerthird backing
     await lowerThird.lowerThirdOut();
@@ -117,7 +144,12 @@ async function configure2023Style()
 async function configure2022Style()
 {
     config.tickerTimeScale = 1;
+    config.flipperClockShouldShow = true;
+    config.tickerOffText = "bbc.co.uk/news";
     config.strapColor = {color: 0x000000, alpha: 0.75};
+    lowerThird.updateNewsBarText("NEWS");
+    headlineComponent.newsBarLogoTextHeadline.text = "NEWS";
+    tileComponent.setTile("uk_reith");
 
     //redraw, hide lowerthird backing
     await lowerThird.lowerThirdOut();
@@ -268,6 +300,14 @@ function openMenu()
         <input type="checkbox" id="leftLiveBugClockOnOff" name="clockOnOff" value="clockOnOff">
         <button onclick="LeftLiveBugIn(document.getElementById('leftLiveBugLocatorText').value,document.getElementById('leftLiveBugClockOnOff').checked, parseInt(document.getElementById('leftLiveBugClockOffset').value))">Left Live Bug In</button>
         <button onclick="LeftLiveBugOut()">Left Live Bug Out</button>
+
+        </br></br></br>
+        <label for="styleSelector">Choose a viz graphics profile:</label>
+        <select onchange="setGraphicsProfile(document.getElementById('styleSelector').value)" id="styleSelector">
+            <option>News Channel 2022</option>
+            <option>News Channel 2023</option>
+            <option>World News 2022</option>
+        </select>
         
 
 
@@ -292,6 +332,18 @@ else
     template.alpha = 1;
 }
 
+window.setGraphicsProfile = (profile) => {
+    switch (profile)
+    {
+        case "News Channel 2022":
+            configure2022Style(); break;
+        case "News Channel 2023":
+            configure2023Style(); break;
+        case "World News 2022":
+            configureWorldStyle(); break;
+
+    }
+};
 
 window.UpdateNewsBarText = (text) => {
     lowerThird.updateNewsBarText(text);

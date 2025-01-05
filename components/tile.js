@@ -25,6 +25,15 @@ export class Tile
         app.stage.addChild(this.sprite);
     }
 
+    async setTile(tileType)
+    {
+        console.log(`loading ${tileType}`);
+        const tileTexture = await PIXI.Assets.load(`tiles/${tileType}.png`);
+        this.sprite.texture = tileTexture; // Update the existing sprite's texture
+        this.sprite.alpha = 0; // Ensure the alpha is set to 0
+
+    }
+
     async in()
     {
         if (this.isIn)
@@ -42,7 +51,9 @@ export class Tile
             tl.to(this.sprite, {
                 alpha: 1,
                 duration: 0.4,
-                onComplete: () => resolve(true)
+                onComplete: () => {
+                    resolve(true)
+                }
             });
         });
     }

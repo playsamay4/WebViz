@@ -5,7 +5,7 @@ import { RemoveFromGraphicsStatus } from '../utils/websocket.js';
 
 
 export class Headline {
-    constructor(app) {
+    constructor(app, newsBarLogoText) {
         if (!app) throw new Error('Headline requires app parameter');
         this.app = app;
         this.isIn = false;
@@ -14,11 +14,11 @@ export class Headline {
             return this.outOneLine();
         });
 
-        this.init(app);
+        this.init(app, newsBarLogoText);
         
     }
 
-    async init(app) {
+    async init(app, newsBarLogoText) {
         this.ctr = new PIXI.Container();
         this.ctr.label = "Headline";
 
@@ -59,12 +59,12 @@ export class Headline {
         this.newsBarLogoHeadline.ctr.addChild(this.newsBarLogoBoxHeadline);
 
         this.newsBarLogoHeadline.bbcLogo = new PIXI.Sprite(await PIXI.Assets.load('images/bbc.png'));
-        this.newsBarLogoHeadline.bbcLogo.width = 560*0.21;
+        this.newsBarLogoHeadline.bbcLogo.width = 560*0.22;
         this.newsBarLogoHeadline.bbcLogo.height = 160*0.22;
         this.newsBarLogoHeadline.bbcLogo.position.set(286,0);
         this.newsBarLogoHeadline.ctr.addChild(this.newsBarLogoHeadline.bbcLogo);
 
-        this.newsBarLogoTextHeadline = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'Reith Sans Bold', fontSize: 35} });
+        this.newsBarLogoTextHeadline = new PIXI.Text({ text: newsBarLogoText, style: {fill: "#ffffff", fontFamily: 'Reith Sans Bold', fontSize: 35} });
         this.newsBarLogoTextHeadline.resolution = 2;
         this.newsBarLogoTextHeadline.x = 286 + this.newsBarLogoHeadline.bbcLogo.width + 11;
         this.newsBarLogoTextHeadline.y = 948;
@@ -269,7 +269,7 @@ export class Headline {
         this.headlineMask.fill(0xffffff);
         
         
-        this.newsBarLogoTextHeadline.y = (this.textLine1.y- this.textLine1Offset.y) - 48;
+        this.newsBarLogoTextHeadline.y = (this.textLine1.y- this.textLine1Offset.y) - 47;
         this.newsBarLogoHeadline.bbcLogo.y = (this.textLine1.y- this.textLine1Offset.y) - 48 + 6;
         this.newsBarLogoBoxHeadline.clear();
         this.newsBarLogoBoxHeadline.rect(275, (this.textLine1.y- this.textLine1Offset.y) - 48, this.newsBarLogoTextHeadline.width + 10 + this.newsBarLogoHeadline.bbcLogo.width + 20, 48);

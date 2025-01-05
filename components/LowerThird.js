@@ -36,7 +36,7 @@ class Flipper {
         this.content = {}
         this.content.ctr = new PIXI.Container(); this.content.ctr.label = "Flipper Content";
 
-        this.text = new PIXI.Text({ text: 'bbc.co.uk/news', style: {fill: "#3d3d3d", fontFamily: 'Reith Sans Medium', fontSize: 34} });
+        this.text = new PIXI.Text({ text: config.tickerOffText, style: {fill: "#3d3d3d", fontFamily: 'Reith Sans Medium', fontSize: 34} });
         this.text.resolution = 2;
         this.text.x = 311
         this.text.y = 995;
@@ -103,14 +103,14 @@ class Clock {
 }
 
 class NewsBar {
-    constructor(parent)
+    constructor(parent, newsBarText)
     {
         this.isIn = false;
 
-        this.init(parent)
+        this.init(parent, newsBarText)
     }
 
-    async init(parent)
+    async init(parent, newsBarText)
     {
         this.ctr = new PIXI.Container(); 
         this.ctr.label = "News Bar";
@@ -186,7 +186,7 @@ class NewsBar {
         this.logo.bbcLogo.position.set(286,949);
         this.logo.ctr.addChild(this.logo.bbcLogo);
 
-        this.logoText = new PIXI.Text({ text: 'NEWS', style: {fill: "#ffffff", fontFamily: 'Reith Sans Bold', fontSize: 35} });
+        this.logoText = new PIXI.Text({ text: newsBarText, style: {fill: "#ffffff", fontFamily: 'Reith Sans Bold', fontSize: 35} });
         this.logoText.resolution = 2;
         this.logoText.x = 286 + this.logo.bbcLogo.width + 11;
         this.logoText.y = 943;
@@ -255,11 +255,22 @@ class NewsBar {
 
 
     }
+
+    changeNewsBarLogoText(text)
+    {
+        this.logoText.text = text;
+        this.logoBox.clear();
+        this.logoBox.rect(275, 942, this.logoText.width + 10 + this.logo.bbcLogo.width + 20, 48);
+        this.logoBox.fill(0xb80000);
+        this.logo.ctr.y = 48;
+
+        this.textBadgeText.x = 275 + this.logoText.width + 10 + this.logo.bbcLogo.width + 32;
+    }
 }
 
 export class LowerThirdFull {
 
-    constructor(app) 
+    constructor(app, newsBarText) 
     {
         this.isIn = false;
 
@@ -280,12 +291,12 @@ export class LowerThirdFull {
             return this.lowerThirdOut();
         });
 
-        this.init(app);
+        this.init(app, newsBarText);
 
 
     }
 
-    init(app)
+    init(app, newsBarText)
     {
         
 
@@ -294,7 +305,7 @@ export class LowerThirdFull {
 
 
         this.flipper = new Flipper(this);
-        this.newsBar = new NewsBar(this);
+        this.newsBar = new NewsBar(this, newsBarText);
 
         app.stage.addChild(this.ctr);
     }
@@ -789,7 +800,7 @@ export class LowerThirdFull {
                 duration: animDuration,
                 ease: easeFunc,
                 onComplete: () => {
-                    if (this.newsBar.badgeText != "" && this.newsBar.badgeText != null)
+                    if (badgeText != "" && badgeText != null)
                     {
                         this.textBadgeIn(badgeText);
                     }
@@ -987,7 +998,8 @@ export class LowerThirdFull {
     clockIn()
     {
 
-        if(this.clockIsIn) return;
+        
+        if(this.clockIsIn || !config.flipperClockShouldShow) return;
         this.clockIsIn = true;
             
 
@@ -1071,14 +1083,13 @@ export class LowerThirdFull {
 
         if(this.flipperIsIn)
             return;
-        this.flipperIsIn = true;
 
         //Only put up the flipper
         let tl = newAnimWithDevTools("Flipper In");
 
         this.newsBar.logo.ctr.y = 0;
 
-        gsap.delayedCall(0.2, () => {this.clockIn()}); 
+        
             
 
 
@@ -1105,12 +1116,13 @@ export class LowerThirdFull {
             onComplete: () =>
             {
                 this.flipper.content.ctr.mask = this.flipper.contentMask;
+                this.flipperIsIn = true;
             }
         }, "<");
 
         
         this.flipper.text.destroy();
-        this.flipper.text = new PIXI.Text({ text: 'bbc.co.uk/news', style: {fill: "#3d3d3d", fontFamily: 'Reith Sans Medium', fontSize: 34} });
+        this.flipper.text = new PIXI.Text({ text: config.tickerOffText, style: {fill: "#3d3d3d", fontFamily: 'Reith Sans Medium', fontSize: 34} });
         this.flipper.text.resolution = 2;
         this.flipper.text.x = 311
         this.flipper.text.y = 992;
@@ -1327,7 +1339,6 @@ export class LowerThirdFull {
         }
             
         this.lowerThirdIsIn = true;
-        this.flipperIsIn = true;
 
         await vizEvents.emit('tile:out');
         await vizEvents.emit('headline:out');
@@ -1357,6 +1368,20 @@ export class LowerThirdFull {
                 duration: 1,
                 ease: "power3.out",
             }, "<");
+
+            if(this.flipperIsIn)
+            {
+                //If programme badge is enabled, show it
+                if(this.programmeBadgeEnabled)
+                {
+                    this.programmeBadgeIn(this.newsBar.programmeBadgeTextContent, this.newsBar.programmeBadgeBgColor, this.newsBar.programmeBadgeTextColor);
+                }
+
+                resolve(true);
+                return;
+            }
+            this.flipperIsIn = true;
+
 
             this.flipper.content.ctr.y = 32;
             this.flipper.content.ctr.alpha = 0;
@@ -1388,7 +1413,7 @@ export class LowerThirdFull {
 
             
             this.flipper.text.destroy();
-            this.flipper.text = new PIXI.Text({ text: 'bbc.co.uk/news', style: {fill: "#3d3d3d", fontFamily: 'Reith Sans Medium', fontSize: 34} });
+            this.flipper.text = new PIXI.Text({ text: config.tickerOffText, style: {fill: "#3d3d3d", fontFamily: 'Reith Sans Medium', fontSize: 34} });
             this.flipper.text.resolution = 2;
             this.flipper.text.x = 311
             this.flipper.text.y = 992;
@@ -1406,6 +1431,15 @@ export class LowerThirdFull {
     
     updateNewsBarText(text)
     {
+        if(this.newsBar.logoText.text == text)
+            return;
+
+        if(!this.lowerThirdIsIn)
+        {
+            this.newsBar.changeNewsBarLogoText(text);
+            return;
+        }
+
         //Flip out the news bar logo stuff
         let tl = newAnimWithDevTools("Update Newsbar Text");
         
@@ -1416,11 +1450,7 @@ export class LowerThirdFull {
             ease: "power3.inOut",
             onComplete: () =>
             {
-                this.newsBar.logoText.text = text;
-                this.newsBar.logoBox.clear();
-                this.newsBar.logoBox.rect(275, 942, this.newsBar.logoText.width + 10 + this.newsBar.logo.bbcLogo.width + 20, 48);
-                this.newsBar.logoBox.fill(0xb80000);
-                this.newsBar.logo.ctr.y = 48;
+                this.newsBar.changeNewsBarLogoText(text);
             }
         });
 
@@ -1432,6 +1462,8 @@ export class LowerThirdFull {
 
         
     }
+
+    
     
     beginTickerSequence()
     {
