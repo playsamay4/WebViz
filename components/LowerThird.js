@@ -11,11 +11,13 @@ class Flipper {
         this.isIn = false;
         this.headlines = 
         [
-            {type: "Headline", text: "Mum, dad and daughters, 4 and 9, among crash dead", duration: 5},
-            {type: "Headline", text: "Tories spent £700m on Rwanda scheme, Cooper says", duration: 5},
-            {type: "Headline", text: "Woman died after begging GP for help - inquest", duration: 5},
-            {type: "Headline", text: "Conservatives plan to name new leader in November", duration: 5},
-            {type: "Headline", text: "Woman killed in attack by pet dog", duration: 5},     
+            {type: "Headline", text: "European leaders to meet in London later today", duration: 6},
+            {type: "Headline", text: "World's first ammonia-powered vessel arrives in UK", duration: 6},
+            {type: "Headline", text: "Harry Styles mural unveiled at his village station", duration: 6},
+            {type: "Headline", text: "Netflix shines light on true story 'that's been buried for a long time'", duration: 6},
+            {type: "Headline", text: "Drivers being taken to court over 'unfair' car park keypad errors", duration: 6},
+            {type: "Headline", text: "Israel blocks entry of all humanitarian aid into Gaza", duration: 6},
+            {type: "Headline", text: "Private spacecraft Blue Ghost lands on Moon", duration: 6},
         ]
 
 
