@@ -1,4 +1,4 @@
-import { initializeWebSocket, AddToGraphicsStatus, OverlayGraphicsStatus} from './utils/websocket.js';
+import { initializeWebSocket, AddToGraphicsStatus, OverlayGraphicsStatus, RemoveFromGraphicsStatus} from './utils/websocket.js';
 
 
 import { Tile } from './components/tile.js';
@@ -6,6 +6,9 @@ import { Headline } from './components/headline.js';
 import { LeftLiveBug } from './components/leftLiveBug.js';
 import { LowerThirdFull } from './components/LowerThird.js';
 import { config } from './utils/config.js';
+import { newAnimWithDevTools } from './utils/animations.js';
+import {  } from './utils/smallted.js';
+
 
 window.devToolsEnabled = false;
 
@@ -16,7 +19,7 @@ globalThis.__PIXI_APP__ = app;
 //window.__PIXI_DEVTOOLS__ = {app: app};
 
 // Intialize the application.
-await app.init({ antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080 });
+await app.init({ canvas: document.getElementById('vizCanvas'), antialias: true, backgroundAlpha:0 , resizeTo: window, width: 1920, height: 1080, sharedTicker:true });
 //await app.init({ antialias: true, background: 0x002233, resizeTo: window, width: 1920, height: 1080 });
 
 
@@ -31,7 +34,7 @@ try
 
 const template = new PIXI.Sprite(templateTexture);
 
-
+template.alpha = 0;
 app.stage.addChild(template);
 
 
@@ -93,43 +96,120 @@ let leftLiveBugComponent = new LeftLiveBug(app);
 let lowerThird = new LowerThirdFull(app, "NEWS");
 
 
-async function configureWorldStyle()
+async function configureWorld2022Style()
 {
+    //redraw, hide lowerthird backing
+    await lowerThird.lowerThirdOutInstant();
+
     config.tickerTimeScale = 1;
     config.flipperClockShouldShow = false;
     config.tickerOffText = "bbc.com/news";
-    config.strapColor = {color: 0x000000, alpha: 0.75};
+    config.strapColor = {color: 0x000000, alpha: 0.65};
+    config.flipperColor = {color: 0xFFFFFF, alpha: 0.85};
     lowerThird.updateNewsBarText("WORLD NEWS");
     tileComponent.setTile("world_reith");
+    headlineComponent.setLogo("reith");
+    lowerThird.newsBar.setLogo("reith");
     headlineComponent.newsBarLogoTextHeadline.text = "WORLD NEWS";
 
-
-    //redraw, hide lowerthird backing
-    await lowerThird.lowerThirdOut();
+    lowerThird.flipper.backing.clear();
+    lowerThird.flipper.backing.rect(0, 990, 1920, 90);
+    lowerThird.flipper.backing.fill(config.flipperColor);
 
     lowerThird.newsBar.backing.clear();
     lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
     lowerThird.newsBar.backing.fill(config.strapColor);
+
+
 
     //change programmeBadgeText font
     lowerThird.newsBar.programmeBadgeText.style.fontFamily = "Reith Sans Medium";
     
 }
 
+async function configureWorld2019Style()
+{
+    //redraw, hide lowerthird backing
+    await lowerThird.lowerThirdOutInstant();
+
+    config.tickerTimeScale = 1;
+    config.flipperClockShouldShow = false;
+    config.tickerOffText = "bbc.com/news";
+    config.strapColor = {color: 0x000000, alpha: 0.65};
+    config.flipperColor = {color: 0xFFFFFF, alpha: 0.85};
+    lowerThird.updateNewsBarText("WORLD NEWS");
+    tileComponent.setTile("world_gill_salmon");
+    headlineComponent.setLogo("gill");
+    lowerThird.newsBar.setLogo("gill");
+    headlineComponent.newsBarLogoTextHeadline.text = "WORLD NEWS";
+
+    lowerThird.flipper.backing.clear();
+    lowerThird.flipper.backing.rect(0, 990, 1920, 90);
+    lowerThird.flipper.backing.fill(config.flipperColor);
+
+    lowerThird.newsBar.backing.clear();
+    lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
+    lowerThird.newsBar.backing.fill(config.strapColor);
+
+
+
+    //change programmeBadgeText font
+    lowerThird.newsBar.programmeBadgeText.style.fontFamily = "Reith Sans Medium";
+    
+    
+}
+
+
 
 async function configure2023Style()
 {
+    //redraw, hide lowerthird backing
+    await lowerThird.lowerThirdOutInstant();
+
     config.tickerTimeScale = 1.5;
     config.flipperClockShouldShow = true;
     config.tickerOffText = "bbc.co.uk/news";
     config.strapColor = {color: 0xb80000, alpha: 1};
+    config.flipperColor = {color: 0xFFFFFF, alpha: 1};
     lowerThird.updateNewsBarText("NEWS");
     headlineComponent.newsBarLogoTextHeadline.text = "NEWS";
     tileComponent.setTile("uk_reith");
+    headlineComponent.setLogo("reith");
+    lowerThird.newsBar.setLogo("reith");
+
+    lowerThird.flipper.backing.clear();
+    lowerThird.flipper.backing.rect(0, 990, 1920, 90);
+    lowerThird.flipper.backing.fill(config.flipperColor);
+
+    lowerThird.newsBar.backing.clear();
+    lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
+    lowerThird.newsBar.backing.fill(config.strapColor);
+
+    //change programmeBadgeText font
+    lowerThird.newsBar.programmeBadgeText.style.fontFamily = "Reith Sans Bold";
 
 
+}
+
+async function configureWorld2023Style()
+{
     //redraw, hide lowerthird backing
-    await lowerThird.lowerThirdOut();
+    await lowerThird.lowerThirdOutInstant();
+
+    config.tickerTimeScale = 1.5;
+    config.flipperClockShouldShow = false;
+    config.tickerOffText = "bbc.co.uk/news";
+    config.strapColor = {color: 0xb80000, alpha: 1};
+    config.flipperColor = {color: 0xFFFFFF, alpha: 1};
+    lowerThird.updateNewsBarText("NEWS");
+    headlineComponent.newsBarLogoTextHeadline.text = "NEWS";
+    tileComponent.setTile("uk_reith");
+    headlineComponent.setLogo("reith");
+    lowerThird.newsBar.setLogo("reith");
+
+    lowerThird.flipper.backing.clear();
+    lowerThird.flipper.backing.rect(0, 990, 1920, 90);
+    lowerThird.flipper.backing.fill(config.flipperColor);
 
     lowerThird.newsBar.backing.clear();
     lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
@@ -143,16 +223,26 @@ async function configure2023Style()
 
 async function configure2022Style()
 {
+
+    //redraw, hide lowerthird backing
+    await lowerThird.lowerThirdOutInstant();
+
     config.tickerTimeScale = 1;
     config.flipperClockShouldShow = true;
     config.tickerOffText = "bbc.co.uk/news";
-    config.strapColor = {color: 0x000000, alpha: 0.75};
+    config.strapColor = {color: 0x000000, alpha: 0.65};
+    config.flipperColor = {color: 0xFFFFFF, alpha: 0.85};
+
     lowerThird.updateNewsBarText("NEWS");
     headlineComponent.newsBarLogoTextHeadline.text = "NEWS";
     tileComponent.setTile("uk_reith");
+    
+    headlineComponent.setLogo("reith");
+    lowerThird.newsBar.setLogo("reith");
 
-    //redraw, hide lowerthird backing
-    await lowerThird.lowerThirdOut();
+    lowerThird.flipper.backing.clear();
+    lowerThird.flipper.backing.rect(0, 990, 1920, 90);
+    lowerThird.flipper.backing.fill(config.flipperColor);
 
     lowerThird.newsBar.backing.clear();
     lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
@@ -163,11 +253,98 @@ async function configure2022Style()
     
 }
 
+async function configure2019Style()
+{
+    //redraw, hide lowerthird backing
+    await lowerThird.lowerThirdOutInstant();
+
+    config.tickerTimeScale = 1;
+    config.flipperClockShouldShow = true;
+    config.tickerOffText = "bbc.co.uk/news";
+    config.strapColor = {color: 0x000000, alpha: 0.65};
+    config.flipperColor = {color: 0xFFFFFF, alpha: 0.85};
+
+    lowerThird.updateNewsBarText("NEWS");
+    headlineComponent.newsBarLogoTextHeadline.text = "NEWS";
+    tileComponent.setTile("uk_gill");
+    headlineComponent.setLogo("gill");
+    lowerThird.newsBar.setLogo("gill");
 
 
+    lowerThird.flipper.backing.clear();
+    lowerThird.flipper.backing.rect(0, 990, 1920, 90);
+    lowerThird.flipper.backing.fill(config.flipperColor);
 
-// Then adding the application's canvas to the DOM body.
-document.body.appendChild(app.canvas);
+    lowerThird.newsBar.backing.clear();
+    lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
+    lowerThird.newsBar.backing.fill(config.strapColor);
+
+    //change programmeBadgeText font
+    lowerThird.newsBar.programmeBadgeText.style.fontFamily = "Reith Sans Medium";
+    
+}
+
+async function configureReportingScotlandStyle()
+{
+    //redraw, hide lowerthird backing
+    await lowerThird.lowerThirdOutInstant();
+
+    config.tickerTimeScale = 1;
+    config.flipperClockShouldShow = true;
+    config.tickerOffText = "bbc.co.uk/news";
+    config.strapColor = {color: 0x000000, alpha: 0.65};
+    config.newsBarLogoBoxColor = 0x0e195b;
+    config.flipperColor = {color: 0xFFFFFF, alpha: 0.85};
+
+    lowerThird.updateNewsBarText("REPORTING SCOTLAND");
+    headlineComponent.newsBarLogoTextHeadline.text = "REPORTING SCOTLAND";
+    tileComponent.setTile("uk_reith");
+
+    lowerThird.flipper.backing.clear();
+    lowerThird.flipper.backing.rect(0, 990, 1920, 90);
+    lowerThird.flipper.backing.fill(config.flipperColor);
+
+    lowerThird.newsBar.backing.clear();
+    lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
+    lowerThird.newsBar.backing.fill(config.strapColor);
+
+    //change programmeBadgeText font
+    lowerThird.newsBar.programmeBadgeText.style.fontFamily = "Reith Sans Medium";
+    
+}
+
+async function configureNewslineStyle()
+{
+    console.log("Newsline");
+    //redraw, hide lowerthird backing
+    await lowerThird.lowerThirdOutInstant();
+
+    config.tickerTimeScale = 1;
+    config.flipperClockShouldShow = true;
+    config.tickerOffText = "bbc.co.uk/news";
+    config.strapColor = {color: 0x000000, alpha: 0.65};
+    config.flipperColor = {color: 0xFFFFFF, alpha: 0.85};
+
+    lowerThird.updateNewsBarText("NEWSLINE");
+    headlineComponent.newsBarLogoTextHeadline.text = "NEWSLINE";
+    tileComponent.setTile("uk_reith");
+    
+    headlineComponent.setLogo("reith");
+    lowerThird.newsBar.setLogo("reith");
+
+    lowerThird.flipper.backing.clear();
+    lowerThird.flipper.backing.rect(0, 990, 1920, 90);
+    lowerThird.flipper.backing.fill(config.flipperColor);
+
+    lowerThird.newsBar.backing.clear();
+    lowerThird.newsBar.backing.rect(0, 942, 1920, 48);
+    lowerThird.newsBar.backing.fill(config.strapColor);
+
+    //change programmeBadgeText font
+    lowerThird.newsBar.programmeBadgeText.style.fontFamily = "Reith Sans Medium";
+    
+}
+
 //remove margins
 document.body.style.margin = 0;
 
@@ -308,6 +485,8 @@ function openMenu()
             <option>News Channel 2023</option>
             <option>World News 2022</option>
         </select>
+
+        <button onclick="VizInit()">Send Viz Init</button>
         
 
 
@@ -325,22 +504,24 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('useAutomation')) 
 {
     template.alpha = 0;
+    
+    app.ticker.maxFPS = 50;
 } 
 else 
 {
-    openMenu();
-    template.alpha = 1;
+    //openMenu();
+    template.alpha = 0;
 }
 
 window.setGraphicsProfile = (profile) => {
     switch (profile)
     {
         case "News Channel 2022":
-            configure2022Style(); break;
+            VizInit("2022"); break;
         case "News Channel 2023":
-            configure2023Style(); break;
+            VizInit("2023"); break;
         case "World News 2022":
-            configureWorldStyle(); break;
+            VizInit("World"); break;
 
     }
 };
@@ -349,7 +530,23 @@ window.UpdateNewsBarText = (text) => {
     lowerThird.updateNewsBarText(text);
 };
 
-window.parseMsg = async (evt )=> 
+window.handleTedMessage = (message) => {
+    switch (message) {
+        case 'LOGO ON':
+            lowerThird.lowerThirdIn();
+            break;
+        case 'LOGO OFF':
+            lowerThird.lowerThirdOut();
+            break;
+
+        default:
+            console.log('Unknown message type:', message.type);
+    }
+    
+    
+}
+
+window.parseMsg = async (evt)=> 
 {
    
     var received_msg = evt.data;
@@ -444,17 +641,7 @@ window.parseMsg = async (evt )=>
             //split the message by \\
             var parts = message.data.split("\\");
             //set the text
-            if (parts[0] == "2023")
-            {
-                configure2023Style();
-            }
-            else if (parts[0] == "Channel")
-            {
-                configure2022Style();
-            }
-            else {
-                configure2022Style();
-            }
+            VizInit(parts[0]);
         
         }
     else if (message.type == "[ALL OFF]")
@@ -547,6 +734,7 @@ window.parseMsg = async (evt )=>
     else if(message.type == "LIVE{OUT}")
     {
         leftLiveBugComponent.out();
+        RemoveFromGraphicsStatus("LIVE");
     }
 
 };
@@ -570,8 +758,59 @@ window.ClockIn = () => { lowerThird.clockIn(); };
 window.ProgrammeBadgeIn = (text,bgColor, fgColor) => { lowerThird.programmeBadgeIn(text,bgColor, fgColor)};
 window.ProgrammeBadgeOut = () => { lowerThird.programmeBadgeOut() };
 window.toggleProgrammeBadge = function() { lowerThird.programmeBadgeEnabled = !lowerThird.programmeBadgeEnabled; }
+window.VizInit = (style) => { 
+  VizInit(style);
+}
+function VizInit(style)
+{
+    
+    console.log("VIZ INIT" + style);
+    let ticker = PIXI.Ticker.shared;
+    ticker.stop();
 
+    let tl = newAnimWithDevTools("Viz Init Flicker");
 
+    // Select the canvas element
+    let canvas = document.getElementById('vizCanvas');
+
+    // Animate the opacity to flicker for 2 seconds
+    tl.to(canvas, {
+        opacity: 0,
+        duration: 0.02,
+        repeat: 100, // 20 times to cover 2 seconds (0.1s * 20 = 2s)
+        yoyo: true, // Flicker effect
+        ease: "linear",
+        onComplete: () => {
+            ticker.start();
+            canvas.style.opacity = 1;
+
+            switch(style)
+            {
+                case "Channel2019":
+                    configure2019Style(); break;
+                case "Channel2022":
+                    configure2022Style(); break;
+                case "Channel2023":
+                    configure2023Style(); break;
+                case "World2023":
+                    configureWorld2023Style(); break;
+                case "World2022":
+                    configureWorld2022Style(); break;
+                case "World2019":
+                    configureWorld2019Style(); break;
+                case "Reporting Scotland":
+                    configureReportingScotlandStyle(); break;
+                case "Newsline":
+                    configureNewslineStyle(); break;
+                default:
+                    configure2022Style(); break;
+            }
+
+        }
+    });
+
+    
+}
 
 window.TextBadgeIn = (text) => { lowerThird.textBadgeIn(text) };
 window.TextBadgeOut = () => { lowerThird.textBadgeOut() };

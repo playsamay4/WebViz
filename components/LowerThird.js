@@ -3,7 +3,7 @@ import { newAnim, newAnimWithDevTools, easeFunc } from '../utils/animations.js';
 import { vizEvents } from '../utils/events.js';
 import { config } from '../utils/config.js';
 import { RemoveFromGraphicsStatus } from '../utils/websocket.js';
-
+import { TedMessage } from '../utils/smallted.js';
 
 class Flipper {
     constructor(parent)
@@ -22,6 +22,8 @@ class Flipper {
         this.init(parent);
     }
 
+
+
     init(parent)
     {
         this.ctr = new PIXI.Container();
@@ -31,7 +33,7 @@ class Flipper {
         this.dot = new PIXI.Graphics();
         //flipper backing
         this.backing.rect(0, 990, 1920, 90);
-        this.backing.fill(0xffffff);
+        this.backing.fill(0xFFFFFF, config.flipperAlpha);
 
         this.content = {}
         this.content.ctr = new PIXI.Container(); this.content.ctr.label = "Flipper Content";
@@ -54,7 +56,7 @@ class Flipper {
         this.contentMask = new PIXI.Graphics()
         // Add the rectangular area to show
             .rect(288, 995, 1920, 40)
-            .fill(0xffffff);
+            .fill({color: 0xffffff, alpha: 0});
         this.ctr.addChild(this.contentMask);
         this.content.ctr.mask = this.contentMask;
 
@@ -64,6 +66,8 @@ class Flipper {
 
         this.clock = new Clock(this);
     }
+
+
 }
 
 class Clock {
@@ -253,6 +257,27 @@ class NewsBar {
         parent.ctr.addChild(this.ctr);
 
 
+
+    }
+
+    async setLogo(logoType)
+    {
+        console.log(`loading ${logoType}`);
+        var logoTexture;
+
+        if(logoType == "gill")
+        {
+            logoTexture = await PIXI.Assets.load(`images/GillSansLogo.png`);
+            this.logoText.style.fontFamily = "Reith Sans Medium";
+        }
+        if(logoType == "reith")
+        {
+            logoTexture = await PIXI.Assets.load(`images/bbc.png`);
+            this.logoText.style.fontFamily = "Reith Sans Bold";
+        }
+        
+    
+        this.logo.bbcLogo.texture = logoTexture; 
 
     }
 
@@ -736,7 +761,7 @@ export class LowerThirdFull {
     {
     
         if(this.oneLineIsIn)
-            return;
+            await this.oneLineOut();
         this.oneLineIsIn = true;
     
         await vizEvents.emit('headline:out');
@@ -926,6 +951,7 @@ export class LowerThirdFull {
 
             gsap.delayedCall(0.5, () => {
                 RemoveFromGraphicsStatus("[LOWERTHIRD ON]");
+                TedMessage("LOGO OFF");
                 resolve(true);
             });
 
@@ -973,7 +999,11 @@ export class LowerThirdFull {
         this.newsBar.logo.ctr.y = 48;
 
         this.clockIsIn = true;
+        this.flipperIsIn = false;
+        this.lowerThirdIsIn = false;
         this.clockOut();
+
+        RemoveFromGraphicsStatus("[LOWERTHIRD ON]");
     }
 
     async clockOut()
@@ -1407,6 +1437,10 @@ export class LowerThirdFull {
                         this.programmeBadgeIn(this.newsBar.programmeBadgeTextContent, this.newsBar.programmeBadgeBgColor, this.newsBar.programmeBadgeTextColor);
                     }
 
+                    setTimeout(() => {
+                        window.BeginTickerSequence();
+                    }, 1500);
+
                     resolve(true);
                 }
             }, "<");
@@ -1434,8 +1468,10 @@ export class LowerThirdFull {
         if(this.newsBar.logoText.text == text)
             return;
 
+        console.log("LWIS2" + this.lowerThirdIsIn);
         if(!this.lowerThirdIsIn)
         {
+            console.log("Lower Third is not in, so not flipping news bar text");
             this.newsBar.changeNewsBarLogoText(text);
             return;
         }

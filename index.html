@@ -23,6 +23,271 @@
             display: block;
         }
     </style>
+    <style>
+        :root {
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #252526;
+            --bg-tertiary: #2d2d2d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #404040;
+            --highlight: #b80000;
+            --error-color: #ff4444;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .main-window {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            z-index: 10;
+        }
+
+        .window-title {
+            background: var(--bg-tertiary);
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .window-title h2 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+
+        .close-button:hover {
+            color: var(--text-primary);
+        }
+
+        .auth-content {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--highlight);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        button {
+            padding: 6px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        button.primary {
+            background: var(--highlight);
+            border-color: var(--highlight);
+        }
+
+        button:hover {
+            background: var(--highlight);
+        }
+
+        .style-select {
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--highlight);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 200px;
+            height: auto;
+        }
+
+        .error-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .dialog-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .dialog-header {
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dialog-header h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: normal;
+            color: var(--text-primary);
+        }
+
+        .dialog-body {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .dialog-icon {
+            font-size: 24px;
+        }
+
+        #dialogMessage {
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .dialog-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .dialog-footer button {
+            min-width: 80px;
+        }
+
+        
+    </style>
+    <canvas style="opacity: 0%;" id="vizCanvas"  width="1920" height="1080"></canvas> 
+    <div id="main-window" class="main-window">
+      <div class="window-title">
+          <h2>WebViz</h2>
+          
+      </div>
+      <div class="auth-content">
+          <div class="logo">
+              <div style="font-size: 24px; font-weight: bold; color: var(--highlight);">
+                  WebViz
+              </div>
+              <div style="font-size: 12px; color: var(--text-secondary);">by playsamay4</div>
+
+          </div>
+
+          <form id="mainForm">
+            
+              <div class="style-select">
+                <label for="style">Renderer style</label>
+                <select id="style" name="style"> 
+                    <option value="Channel2022">Channel 2022</option>
+                    <option value="Channel2023">Channel 2023</option>
+                    <option value="BBC12022">BBC1 2022</option>
+                    <option value="World2022">World 2022</option>
+                    <option value="Channel2019">Channel 2019</option>
+                    <option value="World2019">World 2019</option>
+                </select>
+            </div>
+
+              <div class="form-group">
+                  <label for="rendererId">Renderer ID</label>
+                  <input type="text" id="rendererId" name="rendererId" required="">
+              </div>
+
+              <div class="form-group">
+                  <label for="commonKey">Common key</label>
+                  <input type="text" id="commonKey" name="commonKey" required="">
+              </div>
+
+              <div class="button-group">
+                  <button type="submit" class="primary">Start renderer</button>
+              </div>
+          </form>
+      </div>
+  </div>
+    
+
+    
   <script type="module" src = index.js></script>    
 </body>
 </html>

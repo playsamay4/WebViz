@@ -1,6 +1,7 @@
 import { fitTextToWidthHeadline } from '../utils/textUtils.js';
 import { newAnimWithDevTools, easeFunc } from '../utils/animations.js';
 import { vizEvents } from '../utils/events.js';
+import { config } from '../utils/config.js';
 import { RemoveFromGraphicsStatus } from '../utils/websocket.js';
 
 
@@ -71,7 +72,7 @@ export class Headline {
         this.newsBarLogoHeadline.ctr.addChild(this.newsBarLogoTextHeadline);
 
         this.newsBarLogoBoxHeadline.rect(275, 942, this.newsBarLogoTextHeadline.width + 10 + this.newsBarLogoHeadline.bbcLogo.width + 20, 48);
-        this.newsBarLogoBoxHeadline.fill(0xb80000);
+        this.newsBarLogoBoxHeadline.fill(config.newsBarLogoBoxColor);
 
         //mask
         this.newsBarLogoMaskHeadline = new PIXI.Graphics()
@@ -126,6 +127,30 @@ export class Headline {
         setInterval(async () => {
             this.adjust();
         }, 10);
+    }
+
+
+    async setLogo(logoType)
+    {
+        console.log(`loading ${logoType}`);
+        var logoTexture;
+
+        if(logoType == "gill")
+        {
+            logoTexture = await PIXI.Assets.load(`images/GillSansLogo.png`);
+            this.newsBarLogoTextHeadline.style.fontFamily = "Reith Sans Medium";
+
+        }
+        if(logoType == "reith")
+        {
+            logoTexture = await PIXI.Assets.load(`images/bbc.png`);
+            this.newsBarLogoTextHeadline.style.fontFamily = "Reith Sans Bold";
+
+        }
+        
+    
+        this.newsBarLogoHeadline.bbcLogo.texture = logoTexture; 
+
     }
 
     async inOneLine(text) {
@@ -194,6 +219,7 @@ export class Headline {
 
     async outOneLine() {
         if (!this.isIn) return;
+        RemoveFromGraphicsStatus("HEAD")
 
         let tl = newAnimWithDevTools("Headline Out One Line");
 
@@ -228,7 +254,6 @@ export class Headline {
                 duration: 1,
                 ease: "power4.out",
                 onComplete: () => {
-                    RemoveFromGraphicsStatus("HEAD")
                     this.isIn = false
                     resolve(true);   
                 }
@@ -273,7 +298,7 @@ export class Headline {
         this.newsBarLogoHeadline.bbcLogo.y = (this.textLine1.y- this.textLine1Offset.y) - 48 + 6;
         this.newsBarLogoBoxHeadline.clear();
         this.newsBarLogoBoxHeadline.rect(275, (this.textLine1.y- this.textLine1Offset.y) - 48, this.newsBarLogoTextHeadline.width + 10 + this.newsBarLogoHeadline.bbcLogo.width + 20, 48);
-        this.newsBarLogoBoxHeadline.fill(0xb80000);
+        this.newsBarLogoBoxHeadline.fill(config.newsBarLogoBoxColor);
 
         this.newsBarLogoMaskHeadline.clear();
         this.newsBarLogoMaskHeadline.rect(275, (this.textLine1.y- this.textLine1Offset.y) - 48, this.newsBarLogoTextHeadline.width + 10 + this.newsBarLogoHeadline.bbcLogo.width + 20, 48);
