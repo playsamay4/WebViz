@@ -349,9 +349,9 @@ async function configureNewslineStyle()
 document.body.style.margin = 0;
 
 document.addEventListener('keydown', (event) => {
-//    if (event.key === 'd') {
-//        template.alpha = 1;
-//    }
+   if (event.key === 'm') {
+        openMenu();
+   }
 });
 
 const ws = initializeWebSocket();
