@@ -7,7 +7,7 @@ import { LeftLiveBug } from './components/leftLiveBug.js';
 import { LowerThirdFull } from './components/LowerThird.js';
 import { config } from './utils/config.js';
 import { newAnimWithDevTools } from './utils/animations.js';
-import {  } from './utils/smallted.js';
+import {  } from './utils/smallTed.js';
 
 
 window.devToolsEnabled = false;

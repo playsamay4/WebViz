@@ -3,7 +3,7 @@ import { newAnim, newAnimWithDevTools, easeFunc } from '../utils/animations.js';
 import { vizEvents } from '../utils/events.js';
 import { config } from '../utils/config.js';
 import { RemoveFromGraphicsStatus } from '../utils/websocket.js';
-import { TedMessage } from '../utils/smallted.js';
+import { TedMessage } from '../utils/smallTed.js';
 
 class Flipper {
     constructor(parent)
